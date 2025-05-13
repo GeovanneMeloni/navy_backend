@@ -3,14 +3,16 @@ import { hashPassword } from "../utils/hashFunction.js";
 
 async function login(data) {
     const user = User.find({email: data.email}).lean();
+
+    
 }
 
 async function create(data) {
     data.password = await hashPassword(data.password);
     console.log(data);
     
-    // const user = new User(data);
-    // return user.save();
+    const user = new User(data);
+    return user.save();
 }
 
 async function list() {

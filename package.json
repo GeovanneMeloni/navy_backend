@@ -21,6 +21,7 @@
   "homepage": "https://github.com/GeovanneMeloni/navy_backend#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "mongoose": "^8.14.2"
   }
