@@ -1,13 +1,13 @@
-import User from "../models/user.model.js";
-import { hashPassword } from "../utils/hashFunction.js";
+import User from "../models/user.model.ts";
+import { hashPassword } from "../utils/hashFunction.ts";
 
-async function login(data) {
+async function login(data: ILogin) {
     const user = User.find({email: data.email}).lean();
 
     
 }
 
-async function create(data) {
+async function create(data: ICreateUser) {
     data.password = await hashPassword(data.password);
     console.log(data);
     

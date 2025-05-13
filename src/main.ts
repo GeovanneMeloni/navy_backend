@@ -1,15 +1,15 @@
-import e from "express";
+import e, {Request, Response} from "express";
 import mongoose from "mongoose";
-import initRoutes from "./routes/index.js";
+import initRoutes from "./routes/index.ts";
 
 const app = e();
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI!)
 .catch(err => console.error('Erro ao conectar no MongoDB:', err));
 
 app.use(e.json());
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
     res.send({message: "Oiiii"})
 })
 app.use("/api", initRoutes)

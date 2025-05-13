@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch --env-file .env src/main.js"
+    "dev": "tsx watch --env-file .env src/main.ts"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,10 @@
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "mongoose": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.1",
+    "tsx": "^4.19.4"
   }
 }
