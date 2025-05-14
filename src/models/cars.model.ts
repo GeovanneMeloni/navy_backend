@@ -5,7 +5,9 @@ const carSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     car_info: { type: String },
     active: { type: Boolean, default: true },
-    seller_id: { type: String, required: true }
+    seller_id: { type: String, required: true },
 });
+
+export type CarType = mongoose.InferSchemaType<typeof carSchema>;
 
 export default mongoose.model("Car", carSchema);

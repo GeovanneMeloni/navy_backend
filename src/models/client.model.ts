@@ -7,8 +7,8 @@ const addressSchema = new mongoose.Schema({
     cep: { type: String, require: true, maxLength: 8 },
     estado: { type: String, require: true },
     municipio: { type: String, require: true },
-    tipoEndereco: { type: String, require: true }
-})
+    tipoEndereco: { type: String, require: true },
+});
 
 const clientSchema = new mongoose.Schema({
     rg: { type: String, required: true, maxLength: 10 },
@@ -16,7 +16,9 @@ const clientSchema = new mongoose.Schema({
     cnh: { type: String, required: true, maxLength: 9 },
     active: { type: Boolean, default: true },
     type: { type: String, required: true },
-    address: addressSchema
-})
+    address: addressSchema,
+});
 
-export default mongoose.model('Client', clientSchema);
+export type ClientType = mongoose.InferSchemaType<typeof clientSchema>;
+
+export default mongoose.model("Client", clientSchema);

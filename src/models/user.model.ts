@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
             validator: function (v: string) {
                 return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v);
             },
-            message: props => `${props.value} não é um e-mail válido!`
+            message: (props) => `${props.value} não é um e-mail válido!`,
         },
     },
     password: { type: String, required: true },
@@ -18,4 +18,6 @@ const UserSchema = new mongoose.Schema({
     role: { type: String, required: true },
 });
 
-export default mongoose.model('User', UserSchema);
+export type UserType = mongoose.InferSchemaType<typeof UserSchema>;
+
+export default mongoose.model("User", UserSchema);
