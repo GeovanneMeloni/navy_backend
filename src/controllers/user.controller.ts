@@ -1,27 +1,30 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import userService from "../services/user.service.ts"
 
-async function login(req: Request, res: Response) {
+async function login(req: Request, res: Response, next: NextFunction) {
     try {
-        await userService.login(req.body)
-        res.status(200).json({ message: "Usuário autenticado com sucesso" })
+        const data = await userService.login(req.body)
+        res.status(200).json({ message: "Usuário autenticado com sucesso", tokenJWT: data })
     } catch (error) {
-
-        res.status(500).json(error)
+        next(error)
     }
 }
 
-async function create(req: Request, res: Response) {
+async function create(req: Request, res: Response, next: NextFunction) {
     try {
         await userService.create(req.body)
         res.status(201).json({ message: "Usuário criado com sucesso" });
     } catch (error) {
-        if (error.code === 11000) return res.status(409).json({message: "E-mail já cadastrado"})
-        res.status(500).json(error);
+        if (error.code === 11000) {
+            next({ status: 400, message: "E-mail já cadastrado" })
+            return
+        }
+
+        next(error);
     }
 }
 
-async function list(req: Request, res: Response) {
+async function list(req: Request, res: Response, next: NextFunction) {
     const users = await userService.list();
     res.status(200).json(users)
 }

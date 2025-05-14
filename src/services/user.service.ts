@@ -1,10 +1,20 @@
 import User from "../models/user.model.ts";
-import { hashPassword } from "../utils/hashFunction.ts";
+import jwt from "jsonwebtoken";
+import { comparePassword, hashPassword } from "../utils/hashFunction.ts";
 
 async function login(data: ILogin) {
-    const user = User.find({email: data.email}).lean();
+    const user = await User.findOne({email: data.email}).exec();
 
+    if (!user) throw { status: 404, message: "Usuário não encontrado"};
+
+    const isCorrectPassword = await comparePassword(data.password, user.password);
     
+    if (!isCorrectPassword) throw { status: 400, message: "Senha incorreta"};
+
+    const tokenJWT = jwt.sign({ userId: user.id, role: user.type}, process.env.SECRET_TOKEN!);
+
+    return tokenJWT;
+
 }
 
 async function create(data: ICreateUser) {
