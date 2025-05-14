@@ -11,7 +11,7 @@ async function login(data: ILogin) {
     
     if (!isCorrectPassword) throw { status: 400, message: "Senha incorreta"};
 
-    const tokenJWT = jwt.sign({ userId: user.id, role: user.type}, process.env.SECRET_TOKEN!);
+    const tokenJWT = jwt.sign({ userId: user.id, role: user.role}, process.env.SECRET_TOKEN!);
 
     return tokenJWT;
 
