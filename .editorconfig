@@ -1,0 +1,15 @@
+# EditorConfig is awesome: https://EditorConfig.org
+root = true
+
+# Regras padrão (opcional, pode deixar 2 ou 4)
+[*]
+indent_style = space
+insert_final_newline = true
+
+# Para arquivos TypeScript (.ts)
+[*.ts]
+indent_size = 4
+
+# Para arquivos JSON (.json)
+[*.json]
+indent_size = 2
