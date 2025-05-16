@@ -7,7 +7,7 @@ import Car, { CarType } from "../models/cars.model";
 import { faker } from "@faker-js/faker/locale/pt_BR";
 
 const MONGO_URI = process.env.MONGO_URI!;
-console.log("Conectando em:", MONGO_URI);
+console.log("Conectando em: ", MONGO_URI);
 
 async function seed() {
     try {

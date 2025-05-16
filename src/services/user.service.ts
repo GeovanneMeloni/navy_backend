@@ -17,7 +17,8 @@ async function login(data: ILogin) {
 
     const tokenJWT = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.SECRET_TOKEN!
+        process.env.SECRET_TOKEN!,
+        { expiresIn: '3h' }
     );
 
     return tokenJWT;
