@@ -1,7 +1,8 @@
 interface ICreateUser {
     email: string;
     password: string;
-    type: "admin" | "employer";
+    role: "admin" | "seller" | "buyer";
+    document: Buffer
 }
 
 interface ILogin {

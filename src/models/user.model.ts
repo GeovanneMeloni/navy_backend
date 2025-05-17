@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema({
     login: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     role: { type: String, required: true },
+    document: { type: Buffer, required: true },
 });
 
 export type UserType = mongoose.InferSchemaType<typeof UserSchema>;

@@ -1,8 +1,10 @@
 import e from "express";
 import helmet from "helmet";
+import cors from "cors"
 import mongoose from "mongoose";
 import initRoutes from "./routes/index.ts";
 import { errorHandler } from "./middlewares/errorHandler.ts";
+
 
 const app = e();
 mongoose.connect(process.env.MONGO_URI!)
@@ -10,6 +12,7 @@ mongoose.connect(process.env.MONGO_URI!)
 
 app.use(helmet());
 app.use(e.json());
+app.use(cors())
 
 app.use("/api", initRoutes);
 

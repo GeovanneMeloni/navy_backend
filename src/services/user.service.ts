@@ -26,7 +26,6 @@ async function login(data: ILogin) {
 
 async function create(data: ICreateUser) {
     data.password = await hashPassword(data.password);
-    console.log(data);
 
     const user = new User(data);
     return user.save();

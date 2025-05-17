@@ -11,8 +11,13 @@ async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 async function create(req: Request, res: Response, next: NextFunction) {
-    try {
-        await userService.create(req.body)
+    try {       
+        const data = {
+            ...req.body,
+            document: req.file?.buffer
+        }
+        
+        await userService.create(data)
         res.status(201).json({ message: "Usuário criado com sucesso" });
     } catch (error) {
         if (error.code === 11000) {
