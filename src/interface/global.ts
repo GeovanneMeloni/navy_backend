@@ -10,4 +10,11 @@ interface ILogin {
     password: string;
 }
 
-export { ICreateUser, ILogin };
+interface IUser {
+    email: string;
+    password: string;
+    active: string;
+    role: string;
+}
+
+export { ICreateUser, ILogin, IUser };

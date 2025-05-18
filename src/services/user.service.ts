@@ -1,7 +1,7 @@
 import User from "../models/user.model.ts";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/hashFunction.ts";
-import { ILogin, ICreateUser } from "../interface/global.ts";
+import { ILogin, ICreateUser, IUser } from "../interface/global.ts";
 
 async function login(data: ILogin) {
     const user = await User.findOne({ email: data.email }).exec();
@@ -35,8 +35,30 @@ async function list() {
     return User.find();
 }
 
+async function update(id: string, data: IUser) {
+    try {
+        await User.updateOne({ _id: id}, data);
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function changeStatus(id: string) {
+    try {
+        let doc = await User.findById(id);
+        if (!doc) throw { status: 404, message: "Usuário não encotrado" };
+        
+        doc.active = !doc.active;
+        await doc.save();
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 export default {
     login,
     create,
-    list
+    list,
+    update,
+    changeStatus
 };

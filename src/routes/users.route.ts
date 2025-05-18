@@ -9,5 +9,7 @@ const userRouter = Router();
 userRouter.post("/login", userController.login);
 userRouter.get("/", auth, checkRole("view"), userController.list);
 userRouter.post("/", upload.single("document"), userController.create);
+userRouter.put("/:id", auth, userController.update);
+userRouter.patch("/:id", auth, userController.changeStatus);
 
 export { userRouter };
