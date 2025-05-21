@@ -12,7 +12,11 @@ const FleetSchema = new Schema(
         pricePerHour: { type: Number, required: true }, // Preço por hora (para aluguel)
         fuelType: { type: String, required: true }, // Tipo de combustível (ex: Gasolina, Etanol)
         licensePlate: { type: String, required: true, unique: true }, // Placa do veículo
-        photoUrl: { type: String, required: false }, // URL da imagem do veículo
+        photoUrl: { type: Buffer, required: false }, // URL da imagem do veículo
+        isAvailable: { type: Boolean, default: true },
+        isSold: { type: Boolean, default: false },
+        rentedAt: { type: Date, default: null, required: false }, // Data de aluguel
+        soldAt: { type: Date, default: null },
     },
     {
         timestamps: true, // cria automaticamente createdAt e updatedAt
