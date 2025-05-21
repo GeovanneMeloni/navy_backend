@@ -33,7 +33,7 @@ async function getById(req: Request, res: Response, next: NextFunction) {
                 .status(400)
                 .json({ message: "ID do veículo não informado" });
 
-        const vehicles = await fleetService.getById(id);
+        const vehicles = await fleetService.getById(String(id));
         res.status(200).json(vehicles);
     } catch (error) {
         next(error);
