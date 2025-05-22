@@ -1,0 +1,107 @@
+### Criar carro (com upload de imagem via multipart/form-data)
+POST http://localhost:3000/api/cars
+Content-Type: multipart/form-data
+# 👇 Altere os campos conforme necessário
+# Preencha os campos de formulário via REST Client com suporte a form-data
+# Exemplo funcional no plugin requer plugin "REST Client" no VS Code
+# @prompt nome_do_arquivo - use um caminho de arquivo válido se quiser testar o upload
+
+Content-Disposition: form-data; name="short_description"
+Carro de exemplo
+
+--boundary
+Content-Disposition: form-data; name="details[brand]"
+
+Toyota
+
+--boundary
+Content-Disposition: form-data; name="details[model]"
+
+Corolla
+
+--boundary
+Content-Disposition: form-data; name="details[year]"
+
+2020
+
+--boundary
+Content-Disposition: form-data; name="photo"; filename="foto.jpg"
+Content-Type: image/jpeg
+
+< ./path/to/photo.jpg
+--boundary--
+
+###
+
+### Listar todos os carros
+GET http://localhost:3000/api/cars
+
+###
+
+### Listar carros simplificados
+GET http://localhost:3000/api/cars/simplified
+
+###
+
+### Listar carros disponíveis para aluguel
+GET http://localhost:3000/api/cars/available
+
+###
+
+### Listar carros vendidos
+GET http://localhost:3000/api/cars/sold
+
+###
+
+### Listar carros não vendidos
+GET http://localhost:3000/api/cars/notsold
+
+###
+
+### Buscar carro por ID
+GET http://localhost:3000/api/cars/{{carId}}
+
+###
+
+### Atualizar carro por ID
+PUT http://localhost:3000/api/cars/{{carId}}
+Content-Type: application/json
+
+{
+  "short_description": "Carro atualizado",
+  "details": {
+    "brand": "Toyota",
+    "model": "Hilux",
+    "year": 2021
+  }
+}
+
+###
+
+### Remover carro por ID
+DELETE http://localhost:3000/api/cars/{{carId}}
+
+###
+
+### Marcar carro como vendido
+PATCH http://localhost:3000/api/cars/sell/{{carId}}
+
+###
+
+### Alugar carro por ID
+PATCH http://localhost:3000/api/cars/rent/{{carId}}
+Content-Type: application/json
+
+{
+  "renter_id": "654abc987xyz"
+}
+
+###
+
+### Devolver carro alugado por ID
+PATCH http://localhost:3000/api/cars/return/{{carId}}
+Content-Type: application/json
+
+{
+  "newMileage": 27500
+}

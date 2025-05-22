@@ -1,4 +1,4 @@
-import User from "../models/user.model.ts";
+import { User } from "../models/user/user.model";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/hashFunction.ts";
 import { ILogin, ICreateUser, IUser } from "../interface/global.ts";
@@ -18,7 +18,7 @@ async function login(data: ILogin) {
     const tokenJWT = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.SECRET_TOKEN!,
-        { expiresIn: '3h' }
+        { expiresIn: "3h" }
     );
 
     return tokenJWT;
@@ -37,7 +37,7 @@ async function list() {
 
 async function update(id: string, data: IUser) {
     try {
-        await User.updateOne({ _id: id}, data);
+        await User.updateOne({ _id: id }, data);
     } catch (error) {
         throw new Error(error.message);
     }
@@ -47,7 +47,7 @@ async function changeStatus(id: string) {
     try {
         let doc = await User.findById(id);
         if (!doc) throw { status: 404, message: "Usuário não encotrado" };
-        
+
         doc.active = !doc.active;
         await doc.save();
     } catch (error) {
@@ -60,5 +60,5 @@ export default {
     create,
     list,
     update,
-    changeStatus
+    changeStatus,
 };

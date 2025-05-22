@@ -1,53 +1,59 @@
 // src/seed.ts
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import User, { UserType } from "../models/user.model";
-import Client, { ClientType } from "../models/client.model";
-import Car, { CarType } from "../models/cars.model";
 import { faker } from "@faker-js/faker/locale/pt_BR";
+import { User, UserType } from "../models/user/user.model";
+import { Car, CarType } from "../models/car/car.model";
+import fs from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const MONGO_URI = process.env.MONGO_URI!;
-console.log("Conectando em: ", MONGO_URI);
+console.log("Conectando em:", MONGO_URI);
 
 async function seed() {
     try {
         await mongoose.connect(MONGO_URI);
         console.log("Conectado ao MongoDB");
 
-        // Limpa coleções
         await User.deleteMany({});
-        await Client.deleteMany({});
         await Car.deleteMany({});
 
-        // Usuários
         const users: UserType[] = [];
+        const usersIds: string[] = [];
+
+        const cars: CarType[] = [];
+
         for (let i = 0; i < 3; i++) {
             const userData = await createFakeUser();
             const createdUser = await User.create(userData);
 
+            // O ID do usuário é convertido para string
+            const userId = createdUser._id.toString();
+            usersIds.push(userId);
+
             users.push(createdUser);
         }
 
-        // Clientes
-        const clients: ClientType[] = [];
-        for (let i = 0; i < 5; i++) {
-            const clientData = createFakeClient();
-            const createdClient = await Client.create(clientData);
-
-            clients.push(createdClient);
+        for (let i = 0; i < 25; i++) {
+            const carData = createFakeCar(usersIds);
+            await Car.create(carData);
+            cars.push(carData);
         }
+        const document = { users, cars };
 
-        // Carros
-        const cars: CarType[] = [];
+        const outputPath = path.join(__dirname, "seed-data.json");
 
-        for (let i = 0; i < 8; i++) {
-            const carData = createFakeCar(users);
-            const createdCar = await Car.create(carData);
+        fs.writeFileSync(
+            outputPath,
+            JSON.stringify(document, null, 2),
+            "utf-8"
+        );
 
-            cars.push(createdCar);
-        }
-
-        console.log("Seed concluído com sucesso!");
+        console.log(`Arquivo JSON gerado com sucesso em: ${outputPath}`);
     } catch (err) {
         console.error("Erro ao executar seed:", err);
     } finally {
@@ -56,55 +62,106 @@ async function seed() {
     }
 }
 
-// Função que retorna um objeto de usuário fake
-async function createFakeUser() {
+async function createFakeUser(): Promise<UserType> {
     const password = await bcrypt.hash("senha123", 10);
-    return {
-        email: faker.internet.email(),
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const role = faker.helpers.arrayElement(["seller", "buyer"]);
+    const isClient = role === "buyer";
+
+    const user: UserType = {
+        email: faker.internet.email({
+            firstName,
+            lastName,
+            provider: "test.dev.com",
+        }),
         password,
         login: false,
         active: true,
-        role: faker.helpers.arrayElement(["admin", "seller", "buyer"]),
-    };
-}
-
-// Função que retorna um objeto de cliente fake
-function createFakeClient() {
-    return {
-        rg: faker.string.numeric({ length: 9 }),
-        cpf: faker.string.numeric({ length: 11 }),
-        cnh: faker.string.numeric({ length: 9 }),
-        active: true,
-        type: faker.helpers.arrayElement(["comprador", "locatario"]),
-        address: {
-            rua: faker.location.street(),
-            numero: faker.number.int({ min: 1, max: 9999 }),
-            logradouro: faker.location.secondaryAddress(),
-            cep: faker.location.zipCode("########"),
-            estado: faker.location.state(),
-            municipio: faker.location.city(),
-            tipoEndereco: faker.helpers.arrayElement([
-                "Residencial",
-                "Comercial",
-            ]),
+        role,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user_profile: {
+            name: `${firstName} ${lastName}`,
+            phone: faker.phone.number({ style: "human" }),
+            cpf: faker.string.numeric({ length: 11 }),
+            rg: faker.string.numeric({ length: 9 }),
+            cnh: isClient ? faker.string.numeric({ length: 9 }) : undefined,
+            gender: faker.helpers.arrayElement(["masculino", "feminino"]),
+            address: {
+                rua: faker.location.street(),
+                logradouro: faker.location.secondaryAddress(),
+                numero: faker.location.buildingNumber(),
+                municipio: faker.location.city(),
+                estado: faker.location.state({ abbreviated: false }),
+                cep: faker.location.zipCode("#####-###"),
+            },
+            // `foto` e `document` são opcionais e omitidos aqui.
         },
     };
+
+    return user;
 }
 
-// Função que retorna um objeto de carro fake
-function createFakeCar(users: any[]) {
-    return {
-        value: faker.number.int({ min: 30000, max: 200000 }),
-        amount: faker.number.int({ min: 1, max: 10 }),
-        car_info: `${faker.vehicle.manufacturer()} ${faker.vehicle.model()} ${faker.number.int(
-            { min: 2015, max: 2024 }
-        )}`,
-        active: true,
-        seller_id:
-            users[
-                faker.number.int({ min: 0, max: users.length - 1 })
-            ]._id.toString(),
+function createFakeCar(usersIds: string[]): CarType {
+    const brand = faker.vehicle.manufacturer();
+    const model = faker.vehicle.model();
+    const year = faker.number.int({ min: 2015, max: 2024 });
+    const mileage = faker.number.int({ min: 10_000, max: 120_000 });
+    const transmission = faker.helpers.arrayElement([
+        "manual",
+        "automático",
+        "semi-automático",
+    ]);
+    const rented_at = faker.date.past({ years: 1 });
+    const sold_at = faker.date.past({ years: 1 });
+
+    const isSold = faker.datatype.boolean();
+    const isAvailableToRent = isSold == false && faker.datatype.boolean();
+
+    let userId: mongoose.Types.ObjectId | undefined = undefined;
+    // Se o carro estiver disponível para alugar ou já vendido, associar a um usuário
+    if (isAvailableToRent || isSold) {
+        const randomNumber = faker.number.int({ min: 0, max: 10 });
+        // 50% de chance de não ter um usuário associado
+        const mockUserId =
+            randomNumber > 5 ? undefined : faker.helpers.arrayElement(usersIds);
+        // Se o mockUserId for undefined, não associar a um usuário
+        if (mockUserId) userId = new mongoose.Types.ObjectId(mockUserId);
+    }
+
+    const car: CarType = {
+        price: faker.number.int({ min: 30_000, max: 150_000 }),
+        price_per_hour: faker.number.int({ min: 50, max: 200 }),
+        mileage,
+        license_plate: faker.vehicle.vin().slice(0, 7).toUpperCase(),
+        // photo_url: faker.image.urlPicsumPhotos({ width: 600, height: 400 }),
+        is_available: isAvailableToRent,
+        is_sold: isSold,
+        seller_id: isSold ? userId : undefined,
+        sold_at: isSold ? sold_at : undefined,
+
+        renter_id: isAvailableToRent ? userId : undefined,
+        rented_at: isAvailableToRent ? rented_at : undefined,
+        short_description: `${brand.toUpperCase()} ${model.toUpperCase()} ${mileage.toLocaleString()} km ${year} ${transmission.toUpperCase()}`,
+        details: {
+            brand,
+            model,
+            year,
+            color: faker.vehicle.color(),
+            fuel_type: faker.helpers.arrayElement([
+                "gasolina",
+                "álcool",
+                "diesel",
+                "elétrico",
+            ]),
+            transmission,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
     };
+
+    return car;
 }
 
 seed();

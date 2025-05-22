@@ -17,21 +17,18 @@ interface IUser {
     role: string;
 }
 
-interface IFleet {
-    group: string;
-    model: string;
-    brand: string;
-    year: number;
-    color: string;
-    price: number;
-    pricePerHour: number;
-    fuelType: string;
-    licensePlate: string;
-    photoUrl?: string;
-    isAvailable?: boolean;
-    isSold?: boolean;
-    rentedAt?: Date | null;
-    soldAt?: Date | null;
+interface ICarSimplified {
+    id: string;
+    price: number | null | undefined;
+    price_per_hour: number | null | undefined;
+    mileage: number | null | undefined;
+    license_plate: string | null | undefined;
+    photo_url: Buffer<ArrayBufferLike> | null | undefined;
+    is_available: boolean;
+    is_sold: boolean;
+    rented_at: NativeDate | null | undefined;
+    sold_at: NativeDate | null | undefined;
+    short_description: string;
 }
 
-export { ICreateUser, ILogin, IUser, IFleet };
+export { ICreateUser, ILogin, IUser, ICarSimplified };

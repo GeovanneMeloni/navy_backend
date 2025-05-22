@@ -1,0 +1,592 @@
+{
+  "users": [
+    {
+      "email": "Lavinia_Oliveira@test.dev.com",
+      "password": "$2b$10$BfNOrZczx7d2Wyj1coa0Zub6b1zh7YE2MUhbR/5TnLyU4W89CsARq",
+      "login": false,
+      "active": true,
+      "role": "seller",
+      "user_profile": {
+        "rg": "375170226",
+        "cpf": "89726228671",
+        "gender": "feminino",
+        "address": {
+          "cep": "93227-541",
+          "rua": "Marginal Deneval",
+          "numero": "9300",
+          "logradouro": "Casa 4",
+          "estado": "Maranhão",
+          "municipio": "Carlos do Sul"
+        },
+        "phone": "(00) 62783-7760",
+        "name": "Lavínia Oliveira"
+      },
+      "_id": "682f87aca18c8cae77505b2c",
+      "createdAt": "2025-05-22T20:23:08.490Z",
+      "updatedAt": "2025-05-22T20:23:08.490Z",
+      "__v": 0
+    },
+    {
+      "email": "Silas_Franco50@test.dev.com",
+      "password": "$2b$10$UNHAIlTrnoRXeR4MH9qze.kRenp72k9ioQXIbjx/nHG.XKV/WT98.",
+      "login": false,
+      "active": true,
+      "role": "seller",
+      "user_profile": {
+        "rg": "273254115",
+        "cpf": "65995674175",
+        "gender": "masculino",
+        "address": {
+          "cep": "74966-610",
+          "rua": "Rua Júlia",
+          "numero": "7130",
+          "logradouro": "Lote 23",
+          "estado": "Distrito Federal",
+          "municipio": "Marcela do Sul"
+        },
+        "phone": "+55 (50) 0948-4668",
+        "name": "Silas Franco"
+      },
+      "_id": "682f87aca18c8cae77505b2e",
+      "createdAt": "2025-05-22T20:23:08.619Z",
+      "updatedAt": "2025-05-22T20:23:08.619Z",
+      "__v": 0
+    },
+    {
+      "email": "Marcos_Silva1@test.dev.com",
+      "password": "$2b$10$yl7N4Pdj.psogG6wG7DFluXYyjNefpdxRGL4Xf2io3FFg/N1yrKCy",
+      "login": false,
+      "active": true,
+      "role": "buyer",
+      "user_profile": {
+        "rg": "767711752",
+        "cpf": "06490960132",
+        "cnh": "450478711",
+        "gender": "masculino",
+        "address": {
+          "cep": "25670-802",
+          "rua": "Travessa Saraiva",
+          "numero": "3824",
+          "logradouro": "Lote 85",
+          "estado": "Rio Grande do Norte",
+          "municipio": "Laura do Sul"
+        },
+        "phone": "+55 (49) 1956-7386",
+        "name": "Marcos Silva"
+      },
+      "_id": "682f87aca18c8cae77505b30",
+      "createdAt": "2025-05-22T20:23:08.722Z",
+      "updatedAt": "2025-05-22T20:23:08.722Z",
+      "__v": 0
+    }
+  ],
+  "cars": [
+    {
+      "price": 107483,
+      "price_per_hour": 52,
+      "mileage": 51303,
+      "license_plate": "1W969PE",
+      "is_available": false,
+      "is_sold": true,
+      "sold_at": "2024-06-30T20:21:20.338Z",
+      "short_description": "CITROËN SPYDER 51.303 km 2015 AUTOMÁTICO",
+      "details": {
+        "brand": "Citroën",
+        "model": "Spyder",
+        "year": 2015,
+        "color": "grená",
+        "fuel_type": "álcool",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:08.837Z",
+      "updatedAt": "2025-05-22T20:23:08.837Z"
+    },
+    {
+      "price": 123737,
+      "price_per_hour": 188,
+      "mileage": 57240,
+      "license_plate": "UA239M0",
+      "is_available": false,
+      "is_sold": true,
+      "sold_at": "2024-07-04T16:59:52.826Z",
+      "short_description": "TATA CHARGER 57.240 km 2018 MANUAL",
+      "details": {
+        "brand": "Tata",
+        "model": "Charger",
+        "year": 2018,
+        "color": "roxo",
+        "fuel_type": "álcool",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:08.862Z",
+      "updatedAt": "2025-05-22T20:23:08.862Z"
+    },
+    {
+      "price": 105966,
+      "price_per_hour": 83,
+      "mileage": 96344,
+      "license_plate": "YD2MY8W",
+      "is_available": false,
+      "is_sold": false,
+      "short_description": "CHEVROLET MODEL X 96.344 km 2015 AUTOMÁTICO",
+      "details": {
+        "brand": "Chevrolet",
+        "model": "Model X",
+        "year": 2015,
+        "color": "azul",
+        "fuel_type": "diesel",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:08.882Z",
+      "updatedAt": "2025-05-22T20:23:08.882Z"
+    },
+    {
+      "price": 93081,
+      "price_per_hour": 166,
+      "mileage": 91311,
+      "license_plate": "P5YSR6L",
+      "is_available": true,
+      "is_sold": false,
+      "rented_at": "2024-06-08T07:08:08.277Z",
+      "short_description": "BUGATTI ESCALADE 91.311 km 2017 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Bugatti",
+        "model": "Escalade",
+        "year": 2017,
+        "color": "índigo",
+        "fuel_type": "gasolina",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:08.910Z",
+      "updatedAt": "2025-05-22T20:23:08.910Z"
+    },
+    {
+      "price": 140778,
+      "price_per_hour": 89,
+      "mileage": 113613,
+      "license_plate": "YV9TSWG",
+      "is_available": true,
+      "is_sold": false,
+      "renter_id": "682f87aca18c8cae77505b2c",
+      "rented_at": "2025-02-19T19:52:39.141Z",
+      "short_description": "KIA LAND CRUISER 113.613 km 2020 AUTOMÁTICO",
+      "details": {
+        "brand": "Kia",
+        "model": "Land Cruiser",
+        "year": 2020,
+        "color": "rosa",
+        "fuel_type": "gasolina",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:08.949Z",
+      "updatedAt": "2025-05-22T20:23:08.949Z"
+    },
+    {
+      "price": 121869,
+      "price_per_hour": 50,
+      "mileage": 50365,
+      "license_plate": "51ALDUB",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b2c",
+      "sold_at": "2024-09-24T13:43:35.331Z",
+      "short_description": "MAHINDRA & MAHINDRA EXPLORER 50.365 km 2018 MANUAL",
+      "details": {
+        "brand": "Mahindra & Mahindra",
+        "model": "Explorer",
+        "year": 2018,
+        "color": "pele",
+        "fuel_type": "elétrico",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:08.976Z",
+      "updatedAt": "2025-05-22T20:23:08.976Z"
+    },
+    {
+      "price": 64770,
+      "price_per_hour": 98,
+      "mileage": 74232,
+      "license_plate": "UJG6JSZ",
+      "is_available": false,
+      "is_sold": true,
+      "sold_at": "2025-04-17T12:21:16.720Z",
+      "short_description": "PORSCHE PT CRUISER 74.232 km 2021 AUTOMÁTICO",
+      "details": {
+        "brand": "Porsche",
+        "model": "PT Cruiser",
+        "year": 2021,
+        "color": "bronze",
+        "fuel_type": "álcool",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:08.992Z",
+      "updatedAt": "2025-05-22T20:23:08.992Z"
+    },
+    {
+      "price": 145404,
+      "price_per_hour": 58,
+      "mileage": 67966,
+      "license_plate": "GRWLST4",
+      "is_available": false,
+      "is_sold": false,
+      "short_description": "MITSUBISHI AVENTADOR 67.966 km 2024 AUTOMÁTICO",
+      "details": {
+        "brand": "Mitsubishi",
+        "model": "Aventador",
+        "year": 2024,
+        "color": "ferrugem",
+        "fuel_type": "gasolina",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.006Z",
+      "updatedAt": "2025-05-22T20:23:09.006Z"
+    },
+    {
+      "price": 33913,
+      "price_per_hour": 101,
+      "mileage": 55815,
+      "license_plate": "HEZ5902",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b30",
+      "sold_at": "2024-12-22T01:32:31.816Z",
+      "short_description": "MINI VOLT 55.815 km 2022 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Mini",
+        "model": "Volt",
+        "year": 2022,
+        "color": "cenoura",
+        "fuel_type": "diesel",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.023Z",
+      "updatedAt": "2025-05-22T20:23:09.023Z"
+    },
+    {
+      "price": 123939,
+      "price_per_hour": 153,
+      "mileage": 56342,
+      "license_plate": "4YVTF5H",
+      "is_available": false,
+      "is_sold": false,
+      "short_description": "MG MODEL Y 56.342 km 2019 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "MG",
+        "model": "Model Y",
+        "year": 2019,
+        "color": "púrpura",
+        "fuel_type": "diesel",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.039Z",
+      "updatedAt": "2025-05-22T20:23:09.039Z"
+    },
+    {
+      "price": 84714,
+      "price_per_hour": 104,
+      "mileage": 91324,
+      "license_plate": "XL4GNFW",
+      "is_available": true,
+      "is_sold": false,
+      "renter_id": "682f87aca18c8cae77505b2e",
+      "rented_at": "2024-11-19T11:01:03.911Z",
+      "short_description": "SMART FORTWO 91.324 km 2016 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Smart",
+        "model": "Fortwo",
+        "year": 2016,
+        "color": "púrpura",
+        "fuel_type": "diesel",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.065Z",
+      "updatedAt": "2025-05-22T20:23:09.065Z"
+    },
+    {
+      "price": 55742,
+      "price_per_hour": 164,
+      "mileage": 69759,
+      "license_plate": "8HSMJ6L",
+      "is_available": true,
+      "is_sold": false,
+      "renter_id": "682f87aca18c8cae77505b2e",
+      "rented_at": "2024-12-02T06:10:18.347Z",
+      "short_description": "BUGATTI EXPEDITION 69.759 km 2018 MANUAL",
+      "details": {
+        "brand": "Bugatti",
+        "model": "Expedition",
+        "year": 2018,
+        "color": "limão",
+        "fuel_type": "gasolina",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.080Z",
+      "updatedAt": "2025-05-22T20:23:09.080Z"
+    },
+    {
+      "price": 134291,
+      "price_per_hour": 67,
+      "mileage": 65588,
+      "license_plate": "3E7RLMG",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b2e",
+      "sold_at": "2025-04-12T18:22:28.918Z",
+      "short_description": "NISSAN TAURUS 65.588 km 2020 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Nissan",
+        "model": "Taurus",
+        "year": 2020,
+        "color": "preto",
+        "fuel_type": "elétrico",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.098Z",
+      "updatedAt": "2025-05-22T20:23:09.098Z"
+    },
+    {
+      "price": 45936,
+      "price_per_hour": 64,
+      "mileage": 27189,
+      "license_plate": "M484ZL5",
+      "is_available": true,
+      "is_sold": false,
+      "rented_at": "2025-02-16T10:08:59.786Z",
+      "short_description": "FERRARI MODEL X 27.189 km 2021 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Ferrari",
+        "model": "Model X",
+        "year": 2021,
+        "color": "marrom",
+        "fuel_type": "álcool",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.114Z",
+      "updatedAt": "2025-05-22T20:23:09.114Z"
+    },
+    {
+      "price": 78430,
+      "price_per_hour": 59,
+      "mileage": 35383,
+      "license_plate": "B409VCL",
+      "is_available": true,
+      "is_sold": false,
+      "renter_id": "682f87aca18c8cae77505b2e",
+      "rented_at": "2024-12-18T12:10:46.613Z",
+      "short_description": "POLESTAR WRANGLER 35.383 km 2020 MANUAL",
+      "details": {
+        "brand": "Polestar",
+        "model": "Wrangler",
+        "year": 2020,
+        "color": "vermelho",
+        "fuel_type": "álcool",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.128Z",
+      "updatedAt": "2025-05-22T20:23:09.128Z"
+    },
+    {
+      "price": 130165,
+      "price_per_hour": 177,
+      "mileage": 93513,
+      "license_plate": "AAK14D3",
+      "is_available": false,
+      "is_sold": false,
+      "short_description": "KIA DURANGO 93.513 km 2019 AUTOMÁTICO",
+      "details": {
+        "brand": "Kia",
+        "model": "Durango",
+        "year": 2019,
+        "color": "pele",
+        "fuel_type": "gasolina",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.145Z",
+      "updatedAt": "2025-05-22T20:23:09.145Z"
+    },
+    {
+      "price": 92295,
+      "price_per_hour": 69,
+      "mileage": 15177,
+      "license_plate": "E8F7K8X",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b2c",
+      "sold_at": "2024-09-11T08:58:02.033Z",
+      "short_description": "AUDI LAND CRUISER 15.177 km 2024 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Audi",
+        "model": "Land Cruiser",
+        "year": 2024,
+        "color": "púrpura",
+        "fuel_type": "gasolina",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.159Z",
+      "updatedAt": "2025-05-22T20:23:09.159Z"
+    },
+    {
+      "price": 102480,
+      "price_per_hour": 77,
+      "mileage": 15860,
+      "license_plate": "ZZKZ1WW",
+      "is_available": true,
+      "is_sold": false,
+      "rented_at": "2024-12-07T06:28:23.131Z",
+      "short_description": "BUGATTI FOCUS 15.860 km 2019 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Bugatti",
+        "model": "Focus",
+        "year": 2019,
+        "color": "escarlate",
+        "fuel_type": "gasolina",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.179Z",
+      "updatedAt": "2025-05-22T20:23:09.179Z"
+    },
+    {
+      "price": 50290,
+      "price_per_hour": 93,
+      "mileage": 87202,
+      "license_plate": "AN18CKX",
+      "is_available": true,
+      "is_sold": false,
+      "rented_at": "2025-04-30T19:45:03.396Z",
+      "short_description": "LAMBORGHINI MERCIELAGO 87.202 km 2024 MANUAL",
+      "details": {
+        "brand": "Lamborghini",
+        "model": "Mercielago",
+        "year": 2024,
+        "color": "laranja",
+        "fuel_type": "gasolina",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.195Z",
+      "updatedAt": "2025-05-22T20:23:09.195Z"
+    },
+    {
+      "price": 77508,
+      "price_per_hour": 169,
+      "mileage": 61894,
+      "license_plate": "CNSSCEG",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b2c",
+      "sold_at": "2025-03-08T16:06:58.660Z",
+      "short_description": "MASERATI 1 61.894 km 2020 MANUAL",
+      "details": {
+        "brand": "Maserati",
+        "model": "1",
+        "year": 2020,
+        "color": "magenta",
+        "fuel_type": "elétrico",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.216Z",
+      "updatedAt": "2025-05-22T20:23:09.216Z"
+    },
+    {
+      "price": 47715,
+      "price_per_hour": 117,
+      "mileage": 65014,
+      "license_plate": "HHT9UTT",
+      "is_available": false,
+      "is_sold": true,
+      "sold_at": "2025-03-23T07:03:05.371Z",
+      "short_description": "MINI ELEMENT 65.014 km 2019 AUTOMÁTICO",
+      "details": {
+        "brand": "Mini",
+        "model": "Element",
+        "year": 2019,
+        "color": "amarelo",
+        "fuel_type": "diesel",
+        "transmission": "automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.231Z",
+      "updatedAt": "2025-05-22T20:23:09.231Z"
+    },
+    {
+      "price": 70047,
+      "price_per_hour": 97,
+      "mileage": 56132,
+      "license_plate": "JEXBVZ0",
+      "is_available": false,
+      "is_sold": true,
+      "sold_at": "2024-12-09T20:11:44.099Z",
+      "short_description": "TESLA BEETLE 56.132 km 2024 MANUAL",
+      "details": {
+        "brand": "Tesla",
+        "model": "Beetle",
+        "year": 2024,
+        "color": "madeira",
+        "fuel_type": "álcool",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.247Z",
+      "updatedAt": "2025-05-22T20:23:09.247Z"
+    },
+    {
+      "price": 97453,
+      "price_per_hour": 157,
+      "mileage": 88032,
+      "license_plate": "NK4HC0S",
+      "is_available": true,
+      "is_sold": false,
+      "rented_at": "2025-05-07T22:25:30.180Z",
+      "short_description": "SUZUKI CTS 88.032 km 2022 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Suzuki",
+        "model": "CTS",
+        "year": 2022,
+        "color": "caramelo",
+        "fuel_type": "diesel",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.263Z",
+      "updatedAt": "2025-05-22T20:23:09.263Z"
+    },
+    {
+      "price": 143911,
+      "price_per_hour": 139,
+      "mileage": 92518,
+      "license_plate": "UCXDRCM",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b30",
+      "sold_at": "2025-01-06T18:11:12.204Z",
+      "short_description": "SKODA CAMRY 92.518 km 2024 SEMI-AUTOMÁTICO",
+      "details": {
+        "brand": "Skoda",
+        "model": "Camry",
+        "year": 2024,
+        "color": "verde",
+        "fuel_type": "diesel",
+        "transmission": "semi-automático"
+      },
+      "createdAt": "2025-05-22T20:23:09.278Z",
+      "updatedAt": "2025-05-22T20:23:09.278Z"
+    },
+    {
+      "price": 31133,
+      "price_per_hour": 69,
+      "mileage": 119843,
+      "license_plate": "U9E444Z",
+      "is_available": false,
+      "is_sold": true,
+      "seller_id": "682f87aca18c8cae77505b30",
+      "sold_at": "2024-09-14T02:15:41.730Z",
+      "short_description": "MG MUSTANG 119.843 km 2024 MANUAL",
+      "details": {
+        "brand": "MG",
+        "model": "Mustang",
+        "year": 2024,
+        "color": "turquesa",
+        "fuel_type": "gasolina",
+        "transmission": "manual"
+      },
+      "createdAt": "2025-05-22T20:23:09.296Z",
+      "updatedAt": "2025-05-22T20:23:09.296Z"
+    }
+  ]
+}
