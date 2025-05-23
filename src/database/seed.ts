@@ -34,6 +34,16 @@ async function seed() {
 
         const cars: CarType[] = [];
 
+        const adminUser = await createFakeUser();
+        adminUser.role = "admin";
+        adminUser.userType = "navy";
+        adminUser.email = "admin@navy.com";
+        adminUser.user_profile = undefined;
+        adminUser.login = true;
+        adminUser.active = true;
+
+        users.push(adminUser);
+
         for (let i = 0; i < 3; i++) {
             const userData = await createFakeUser();
             const createdUser = await User.create(userData);
@@ -161,6 +171,7 @@ function createFakeCar(usersIds: string[]): CarType {
 
         renter_id: isAvailableToRent ? userId : undefined,
         rented_at: isAvailableToRent ? rented_at : undefined,
+
         short_description: `${brand.toUpperCase()} ${model.toUpperCase()} ${mileage.toLocaleString()} km ${year} ${transmission.toUpperCase()}`,
         details: {
             brand,
