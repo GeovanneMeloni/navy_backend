@@ -7,9 +7,12 @@ import { Car, CarType } from "../models/car/car.model";
 import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+import { AddressType } from "../models/user/address.schema";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const outputFileName = "seed.data.json";
 
 const MONGO_URI = process.env.MONGO_URI!;
 console.log("Conectando em:", MONGO_URI);
@@ -18,6 +21,10 @@ async function seed() {
     try {
         await mongoose.connect(MONGO_URI);
         console.log("Conectado ao MongoDB");
+
+        const seed = 123;
+        faker.seed(seed); // Para gerar dados consistentes entre execuções
+        console.log("Seed:", seed);
 
         await User.deleteMany({});
         await Car.deleteMany({});
@@ -45,7 +52,7 @@ async function seed() {
         }
         const document = { users, cars };
 
-        const outputPath = path.join(__dirname, "seed-data.json");
+        const outputPath = path.join(__dirname, outputFileName);
 
         fs.writeFileSync(
             outputPath,
@@ -60,6 +67,22 @@ async function seed() {
         await mongoose.disconnect();
         process.exit(0);
     }
+}
+
+function createFakeAddress(): AddressType {
+    const address: AddressType = {
+        cep: faker.location.zipCode("#####-###"),
+        rua: faker.location.street(),
+        numero: faker.location.buildingNumber(),
+        logradouro: faker.location.streetAddress(),
+        estado: faker.location.state({ abbreviated: false }),
+        municipio: faker.location.city(),
+        location: {
+            latitude: faker.location.latitude(),
+            longitude: faker.location.longitude(),
+        },
+    };
+    return address;
 }
 
 async function createFakeUser(): Promise<UserType> {
@@ -88,14 +111,7 @@ async function createFakeUser(): Promise<UserType> {
             rg: faker.string.numeric({ length: 9 }),
             cnh: isClient ? faker.string.numeric({ length: 9 }) : undefined,
             gender: faker.helpers.arrayElement(["masculino", "feminino"]),
-            address: {
-                rua: faker.location.street(),
-                logradouro: faker.location.secondaryAddress(),
-                numero: faker.location.buildingNumber(),
-                municipio: faker.location.city(),
-                estado: faker.location.state({ abbreviated: false }),
-                cep: faker.location.zipCode("#####-###"),
-            },
+            address: createFakeAddress(),
             // `foto` e `document` são opcionais e omitidos aqui.
         },
     };
@@ -140,6 +156,8 @@ function createFakeCar(usersIds: string[]): CarType {
         is_sold: isSold,
         seller_id: isSold ? userId : undefined,
         sold_at: isSold ? sold_at : undefined,
+
+        address: createFakeAddress(),
 
         renter_id: isAvailableToRent ? userId : undefined,
         rented_at: isAvailableToRent ? rented_at : undefined,

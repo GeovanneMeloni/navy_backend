@@ -22,6 +22,12 @@ const UserSchema = new Schema(
             required: true,
             enum: ["buyer", "seller", "admin"],
         },
+        userType: {
+            type: String,
+            required: false,
+            default: "individual", // Pessoa física
+            enum: ["individual", "company", "navy"], // Pessoa física, Concessionária ou Navy
+        },
         user_profile: { type: UserProfileSchema, required: false },
     },
     {
