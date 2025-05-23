@@ -41,8 +41,9 @@ async function seed() {
         adminUser.user_profile = undefined;
         adminUser.login = true;
         adminUser.active = true;
+        const createdAdminUser = await User.create(adminUser);
 
-        users.push(adminUser);
+        users.push(createdAdminUser);
 
         for (let i = 0; i < 3; i++) {
             const userData = await createFakeUser();
