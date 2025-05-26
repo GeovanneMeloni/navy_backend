@@ -2,9 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export function auth(req: Request, res: Response, next: NextFunction) {
-    try {
-        console.log("Oiiii");
-        
+    try {        
         const authorization = req.headers.authorization
         if (!authorization || !authorization?.includes("Bearer")) {
             res.status(401).json({ message: "Token inválido" })

@@ -25,20 +25,27 @@ async function create(req: Request, res: Response, next: NextFunction) {
             next({ status: 409, message: "E-mail já cadastrado" })
             return
         }
-
         next(error);
     }
 }
 
 async function list(req: Request, res: Response, next: NextFunction) {
-    const users = await userService.list();
+    const users = (await userService.list()).map(e => {
+        return {
+            id: e.id,
+            email: e.email,
+            role: e.role,
+            userType: e.userType,
+            active: e.active,
+            createdAt: e.createdAt,
+            updatedAt: e.updatedAt
+        }
+    });
     res.status(200).json(users);
 }
 
 async function update(req: Request, res: Response, next: NextFunction) {
-    try {
-        console.log("adsafas");
-        
+    try {       
         const body: IUser = req.body;
         const { id } = req.query;
         await userService.update(String(id), body);
