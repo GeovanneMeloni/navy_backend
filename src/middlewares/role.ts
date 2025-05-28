@@ -1,25 +1,36 @@
-const roles = {
-  admin: {
-    can: ['create', 'edit', 'delete', 'view'],
-  },
-  seller: {
-    can: ['create', 'edit', 'view'],
-  },
-  buyer: {
-    can: ['view'],
-  },
+import { Request, Response, NextFunction } from 'express';
+
+export type Action = 'create' | 'edit' | 'delete' | 'view';
+
+export const roles: Record<string, Action[]> = {
+  admin: ['create', 'edit', 'delete', 'view'],
+  seller: ['create', 'edit', 'view'],
+  buyer: ['view'],
 };
 
+export function checkPermission(action: Action) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const user = req["user"];
 
-export function checkRole(action: string){
-  return (req, res, next) => {
-    const userRole = req.user.role;
-    const permissions = roles[userRole].can;
+    if (!user || !user.role) {
+      res.status(401).json({ message: 'Usuário não autenticado' });
+      return;
+    }
+
+    const permissions = roles[user.role];
+
+    if (!permissions) {
+      res.status(403).json({ message: 'Função inválida' });
+      return;
+    }
 
     if (permissions.includes(action)) {
-      next(); 
-    } else {
-      res.status(403).json({ message: "Access Denied" });
+      next();
+      return;
     }
+
+    res.status(403).json({ message: 'Acesso negado' });
+    return;
   };
 }
+
