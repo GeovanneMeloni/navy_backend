@@ -1,4 +1,4 @@
-import { User } from "../models/user/user.model";
+import { User, UserType } from "../models/user/user.model";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/hashFunction.ts";
 import { ILogin, ICreateUser, IUser } from "../interface/global.ts";
@@ -24,7 +24,7 @@ async function login(data: ILogin) {
     return tokenJWT;
 }
 
-async function create(data: ICreateUser) {
+async function create(data: UserType) {
     data.password = await hashPassword(data.password);
 
     const user = new User(data);

@@ -15,12 +15,11 @@ const UserSchema = new Schema(
             },
         },
         password: { type: String, required: true },
-        login: { type: Boolean, default: false },
         active: { type: Boolean, default: true },
         role: {
             type: String,
             required: true,
-            enum: ["buyer", "seller", "admin"],
+            enum: ["client", "employee", "admin"],
         },
         userType: {
             type: String,
@@ -31,7 +30,6 @@ const UserSchema = new Schema(
         user_profile: { type: UserProfileSchema, required: false },
     },
     {
-        timestamps: true,
         versionKey: false,
     }
 );

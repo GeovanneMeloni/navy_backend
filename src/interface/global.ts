@@ -1,8 +1,17 @@
 interface ICreateUser {
     email: string;
     password: string;
-    role: "admin" | "seller" | "buyer";
-    document: Buffer;
+    role: "admin" | "employee" | "client";
+    name: string;
+    phone: string;
+    rg: string;
+    cpf: string;
+    userType?: "individual" | "company" | "navy";
+}
+
+
+interface ICreateEmployee extends ICreateUser {
+
 }
 
 interface ILogin {
