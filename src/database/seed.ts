@@ -39,7 +39,6 @@ async function seed() {
         adminUser.userType = "navy";
         adminUser.email = "admin@navy.com";
         adminUser.user_profile = undefined;
-        adminUser.login = true;
         adminUser.active = true;
         const createdAdminUser = await User.create(adminUser);
 
@@ -100,8 +99,8 @@ async function createFakeUser(): Promise<UserType> {
     const password = await bcrypt.hash("senha123", 10);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
-    const role = faker.helpers.arrayElement(["seller", "buyer"]);
-    const isClient = role === "buyer";
+    const role = faker.helpers.arrayElement(["client", "employee"]);
+    const isClient = role === "client";
 
     const user: UserType = {
         email: faker.internet.email({
@@ -110,11 +109,8 @@ async function createFakeUser(): Promise<UserType> {
             provider: "test.dev.com",
         }),
         password,
-        login: false,
         active: true,
         role,
-        createdAt: new Date(),
-        updatedAt: new Date(),
         user_profile: {
             name: `${firstName} ${lastName}`,
             phone: faker.phone.number({ style: "human" }),
