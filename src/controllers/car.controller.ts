@@ -1,15 +1,54 @@
 import { Request, Response, NextFunction } from "express";
 import carService from "../services/car.service";
+import { getSignedUrl, uploadFile } from "../utils/bucket";
 
 async function create(req: Request, res: Response, next: NextFunction) {
     try {
+        const file = req.files[0];
+
+        if (!file) {
+            res.status(400).json({
+                message: "Foto do carro é obrigatório",
+            });
+            return;
+        }
+
+        const photoCarUrl = await uploadFile(
+            file.buffer,
+            `fotos/${Date.now()}_${file.originalname}`
+        );
+
+        const {
+            group,
+            model,
+            brand,
+            year,
+            color,
+            fuel_type,
+            transmission,
+            ...body
+        } = req.body;
+
+        const details = {
+            group,
+            model,
+            brand,
+            year,
+            color,
+            fuel_type,
+            transmission,
+        };
+
         const data = {
-            ...req.body,
-            photo_url: req.file?.buffer,
+            ...body,
+            details,
+            photo_url: photoCarUrl,
         };
         await carService.create(data);
         res.status(201).json({ message: "Carro criado com sucesso" });
     } catch (error) {
+        console.log(error);
+        
         next(error);
     }
 }
@@ -17,7 +56,22 @@ async function create(req: Request, res: Response, next: NextFunction) {
 async function list(req: Request, res: Response, next: NextFunction) {
     try {
         const cars = await carService.getAll();
-        res.status(200).json(cars);
+
+        const carsWithUrl = await Promise.all(
+            cars.map(async (car) => {
+                if (car.photo_url) {
+                    const carPhotoSignedUrl = await getSignedUrl(car.photo_url);
+                    return {
+                        ...car,
+                        photo_url: carPhotoSignedUrl,
+                    };
+                } else {
+                    return car;
+                }
+            })
+        );
+
+        res.status(200).json(carsWithUrl);
     } catch (error) {
         next(error);
     }

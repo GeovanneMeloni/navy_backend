@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
 import { ICreateUser, IUser } from "../interface/global";
-import mongoose from "mongoose";
 import { UserType } from "../models/user/user.model";
 import { getSignedUrl, uploadFile } from "../utils/bucket";
 

@@ -4,8 +4,8 @@ export type Action = 'create' | 'edit' | 'delete' | 'view';
 
 export const roles: Record<string, Action[]> = {
   admin: ['create', 'edit', 'delete', 'view'],
-  seller: ['create', 'edit', 'view'],
-  buyer: ['view'],
+  employee: ['create', 'edit', 'view'],
+  client: ['view'],
 };
 
 export function checkPermission(action: Action) {
