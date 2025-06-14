@@ -7,7 +7,7 @@ const CarSchema = new Schema(
         price: { type: Number, required: false }, // Preço de venda
         price_per_hour: { type: Number, required: false }, // Preço por hora (aluguel)
         license_plate: { type: String, required: false, unique: false }, // Placa do carro
-        photo: { type: Buffer, required: false },
+        photo_url: { type: String, required: false },
         is_available: { type: Boolean, default: true }, // Disponível para aluguel
         is_sold: { type: Boolean, default: false }, // Vendido
         rented_at: { type: Date, default: null, required: false }, // Data de aluguel

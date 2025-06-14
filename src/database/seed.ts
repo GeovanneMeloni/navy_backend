@@ -9,7 +9,6 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { AddressType } from "../models/user/address.schema";
 
-const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const outputFileName = "seed.data.json";

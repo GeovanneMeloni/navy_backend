@@ -32,7 +32,7 @@ interface ICarSimplified {
     price_per_hour: number | null | undefined;
     mileage: number | null | undefined;
     license_plate: string | null | undefined;
-    photo_url: Buffer<ArrayBufferLike> | null | undefined;
+    photo_url: string | null | undefined;
     is_available: boolean;
     is_sold: boolean;
     rented_at: NativeDate | null | undefined;

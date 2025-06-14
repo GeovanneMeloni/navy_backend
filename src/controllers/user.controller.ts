@@ -45,7 +45,7 @@ async function createOperator(req: Request, res: Response, next: NextFunction) {
         await userService.create(data);
         res.status(201).json({ message: "Usuário criado com sucesso" });
         return;
-    } catch (error) {
+    } catch (error: any) {
         if (error.code === 11000) {
             next({ status: 409, message: "E-mail já cadastrado" });
             return;
@@ -103,7 +103,7 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
         };
         await userService.create(data);
         res.status(201).json({ message: "Usuário criado com sucesso" });
-    } catch (error) {
+    } catch (error: any) {
         if (error.code === 11000) {
             next({ status: 409, message: "E-mail já cadastrado" });
             return;
