@@ -1,7 +1,7 @@
 import { User, UserType } from "../models/user/user.model";
 import jwt from "jsonwebtoken";
-import { comparePassword, hashPassword } from "../utils/hashFunction.ts";
-import { ILogin, ICreateUser, IUser } from "../interface/global.ts";
+import { comparePassword, hashPassword } from "../utils/hashFunction";
+import { ILogin, ICreateUser, IUser } from "../interface/global";
 
 async function login(data: ILogin) {
     const user = await User.findOne({ email: data.email }).exec();

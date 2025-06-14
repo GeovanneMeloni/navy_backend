@@ -1,7 +1,7 @@
 import { Router } from "express";
-import carController from "../controllers/car.controller.ts";
-import { auth } from "../middlewares/auth.ts";
-import { upload } from "../middlewares/multer.ts";
+import carController from "../controllers/car.controller";
+import { auth } from "../middlewares/auth";
+import { upload } from "../middlewares/multer";
 
 const carRouter = Router();
 

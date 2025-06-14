@@ -1,8 +1,8 @@
 import { Router } from "express";
-import userController from "../controllers/user.controller.ts";
-import { auth } from "../middlewares/auth.ts";
-import { checkPermission } from "../middlewares/role.ts";
-import { upload } from "../middlewares/multer.ts";
+import userController from "../controllers/user.controller";
+import { auth } from "../middlewares/auth";
+import { checkPermission } from "../middlewares/role";
+import { upload } from "../middlewares/multer";
 
 const userRouter = Router();
 

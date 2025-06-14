@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import userService from "../services/user.service.ts";
-import { ICreateUser, IUser } from "../interface/global.ts";
+import userService from "../services/user.service";
+import { ICreateUser, IUser } from "../interface/global";
 import mongoose from "mongoose";
-import { UserType } from "../models/user/user.model.ts";
-import { getSignedUrl, uploadFile } from "../utils/bucket.ts";
+import { UserType } from "../models/user/user.model";
+import { getSignedUrl, uploadFile } from "../utils/bucket";
 
 async function login(req: Request, res: Response, next: NextFunction) {
     try {

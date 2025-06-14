@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { userRouter } from "./users.route.ts";
-import { auth } from "../middlewares/auth.ts";
-import { carRouter } from "./car.route.ts";
+import { userRouter } from "./users.route";
+import { auth } from "../middlewares/auth";
+import { carRouter } from "./car.route";
 
 const initRoutes = Router();
 

@@ -2,8 +2,8 @@ import e from "express";
 import helmet from "helmet";
 import cors from "cors";
 import mongoose from "mongoose";
-import initRoutes from "./routes/index.ts";
-import { errorHandler } from "./middlewares/errorHandler.ts";
+import initRoutes from "./routes/index";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = e();
 mongoose
