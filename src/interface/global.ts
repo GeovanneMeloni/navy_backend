@@ -9,10 +9,7 @@ interface ICreateUser {
     userType?: "individual" | "company" | "navy";
 }
 
-
-interface ICreateEmployee extends ICreateUser {
-
-}
+interface ICreateEmployee extends ICreateUser {}
 
 interface ILogin {
     email: string;
@@ -26,18 +23,4 @@ interface IUser {
     role: string;
 }
 
-interface ICarSimplified {
-    id: string;
-    price: number | null | undefined;
-    price_per_hour: number | null | undefined;
-    mileage: number | null | undefined;
-    license_plate: string | null | undefined;
-    photo_url: string | null | undefined;
-    is_available: boolean;
-    is_sold: boolean;
-    rented_at: NativeDate | null | undefined;
-    sold_at: NativeDate | null | undefined;
-    short_description: string;
-}
-
-export { ICreateUser, ILogin, IUser, ICarSimplified };
+export { ICreateUser, ILogin, IUser };

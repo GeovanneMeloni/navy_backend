@@ -16,11 +16,11 @@ const LocationSchema = new Schema(
 export const AddressSchema = new Schema(
     {
         cep: { type: String, required: true, maxLength: 9 },
-        rua: { type: String, required: true },
-        numero: { type: String, required: true }, // numero pode ser string, pois pode conter letras (ex: 123A)
-        logradouro: { type: String, required: true },
-        estado: { type: String, required: true },
-        municipio: { type: String, required: true },
+        rua: { type: String, required: false },
+        numero: { type: String, required: false }, // numero pode ser string, pois pode conter letras (ex: 123A)
+        logradouro: { type: String, required: false },
+        estado: { type: String, required: false },
+        municipio: { type: String, required: false },
         complemento: { type: String, required: false },
         tipoEndereco: { type: String, required: false },
         location: { type: LocationSchema, required: false }, // Localização geográfica
