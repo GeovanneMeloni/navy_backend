@@ -9,11 +9,32 @@ const userRouter = Router();
 userRouter.post("/login", userController.login);
 
 userRouter.get("/", auth, checkPermission("view"), userController.list);
-userRouter.post("/employee", auth, checkPermission("create"), userController.createOperator);
+userRouter.post(
+    "/employee",
+    auth,
+    checkPermission("create"),
+    userController.createOperator
+);
 
-userRouter.post("/client", upload.fields([{ name: "foto" }, { name: "document" }]), userController.createClient);
+userRouter.post(
+    "/client",
+    upload.fields([{ name: "foto" }, { name: "document" }]),
+    userController.createClient
+);
 
 userRouter.put("/:id", auth, checkPermission("edit"), userController.update);
-userRouter.patch("/:id", auth, checkPermission("edit"), userController.changeStatus);
+userRouter.patch(
+    "/:id",
+    auth,
+    checkPermission("edit"),
+    userController.changeStatus
+);
+
+userRouter.delete(
+    "/:id",
+    auth,
+    checkPermission("delete"),
+    userController.remove
+);
 
 export { userRouter };

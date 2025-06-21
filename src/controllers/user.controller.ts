@@ -151,6 +151,23 @@ async function update(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function remove(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.query;
+
+        if (!id || !mongoose.isValidObjectId(String(id))) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
+
+        await userService.remove(String(id));
+
+        res.status(204).json({ message: "Usuário removido com sucesso" });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function changeStatus(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.query;
@@ -168,4 +185,5 @@ export default {
     list,
     update,
     changeStatus,
+    remove,
 };
