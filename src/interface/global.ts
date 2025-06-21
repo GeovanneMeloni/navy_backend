@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 interface ICreateUser {
     email: string;
     password: string;
@@ -9,10 +11,7 @@ interface ICreateUser {
     userType?: "individual" | "company" | "navy";
 }
 
-
-interface ICreateEmployee extends ICreateUser {
-
-}
+interface ICreateEmployee extends ICreateUser {}
 
 interface ILogin {
     email: string;
@@ -26,18 +25,42 @@ interface IUser {
     role: string;
 }
 
-interface ICarSimplified {
-    id: string;
-    price: number | null | undefined;
-    price_per_hour: number | null | undefined;
-    mileage: number | null | undefined;
-    license_plate: string | null | undefined;
-    photo_url: string | null | undefined;
-    is_available: boolean;
-    is_sold: boolean;
-    rented_at: NativeDate | null | undefined;
-    sold_at: NativeDate | null | undefined;
-    short_description: string;
+interface ICreateCar {
+    operationType?: "rent" | "sale";
+    price?: number;
+    price_per_hour?: number;
+    license_plate: string;
+
+    status: "available" | "rented" | "sold";
+    rented_at?: NativeDate;
+    sold_at?: NativeDate;
+    rented_by?: string;
+    sold_to?: string;
+
+    mileage?: number;
+
+    // Identificador do dono do carro
+    owner_id: string;
+
+    group?: string;
+    model: string;
+    brand: string;
+    year: number;
+    color: string;
+    fuel_type?: string;
+    transmission?: string;
+
+    // Endereço - campos planos
+    cep?: string;
+    rua?: string;
+    numero?: string;
+    logradouro?: string;
+    estado?: string;
+    municipio?: string;
+
+    // Localização - também campos planos
+    latitude?: number;
+    longitude?: number;
 }
 
-export { ICreateUser, ILogin, IUser, ICarSimplified };
+export { ICreateUser, ILogin, IUser, ICreateCar };

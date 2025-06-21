@@ -34,6 +34,10 @@ async function list() {
     return User.find();
 }
 
+async function getById(id: string) {
+    return await User.findById(id);
+}
+
 async function update(id: string, data: IUser) {
     try {
         await User.updateOne({ _id: id }, data);
@@ -54,10 +58,22 @@ async function changeStatus(id: string) {
     }
 }
 
+async function remove(id: string) {
+    try {
+        const user = await User.findByIdAndDelete(id);
+
+        if (!user) throw { status: 404, message: "Usuário não encontrado" };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 export default {
     login,
     create,
     list,
     update,
     changeStatus,
+    remove,
+    getById,
 };

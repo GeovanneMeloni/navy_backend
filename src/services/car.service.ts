@@ -1,160 +1,205 @@
-import { ICarSimplified } from "../interface/global";
+import { error } from "console";
 import { Car, CarType } from "../models/car/car.model";
 import { User } from "../models/user/user.model";
+import { generateShortDescription } from "../utils/car.utils";
 
 async function create(data: CarType) {
+    // Verifica se o carro é para venda ou aluguel
+    if (!data.operationType) {
+        // Se não for definido, lança um erro
+        throw {
+            status: 400,
+            message:
+                "É necessário definir se o carro é para venda ou para alugar",
+            errorDetails:
+                "É necessário definir o campo operationType, que deve ser 'sale' ou 'rent'",
+        };
+    }
+
     // Gera a short_description automaticamente
     data.short_description = generateShortDescription(data);
+
+    const car = new Car(data);
+
+    return await car.save();
+}
+
+async function createCarForSale(data: CarType) {
+    data.short_description = generateShortDescription(data);
+
+    data.operationType = "sale";
+    if (!data.price) {
+        throw {
+            status: 400,
+            message: "Preço é obrigatório para carros à venda",
+            errorDetails:
+                "É necessário definir o campo price, que deve ser um número",
+        };
+    }
+
     const car = new Car(data);
     return await car.save();
 }
 
-async function getAllSimplified(): Promise<ICarSimplified[]> {
-    const carsSimplified = (await Car.find()).map((car) => {
-        return {
-            id: car._id.toString(),
-            price: car.price,
-            price_per_hour: car.price_per_hour,
-            mileage: car.mileage,
-            license_plate: car.license_plate,
-            photo_url: car.photo_url,
-            is_available: car.is_available,
-            is_sold: car.is_sold,
-            rented_at: car.rented_at,
-            sold_at: car.sold_at,
-            short_description: car.short_description,
+async function createCarForRent(data: CarType) {
+    data.operationType = "rent";
+
+    data.short_description = generateShortDescription(data);
+
+    if (!data.price_per_hour) {
+        throw {
+            status: 400,
+            message: "Preço por hora é obrigatório para carros para alugar",
         };
-    });
+    }
 
-    return carsSimplified;
+    const car = new Car(data);
+    return await car.save();
 }
 
-async function getAll(): Promise<CarType[]> {
-    return await Car.find().exec();
+async function buyCar(carId: string, buyerId: string) {
+    const car = await Car.findById(carId);
+
+    if (!car) throw { status: 404, message: "Carro não encontrado" };
+
+    if (car.operationType !== "sale" || car.status !== "available") {
+        throw { status: 400, message: "Carro não disponível para compra" };
+    }
+
+    const user = await User.findById(buyerId);
+
+    if (!user) throw { status: 404, message: "Usuário não encontrado" };
+
+    car.status = "sold";
+
+    car.sold_to = user._id;
+
+    car.sold_at = new Date();
+
+    return await car.save();
 }
 
-async function getAllNotSold(): Promise<CarType[]> {
-    return await Car.find({ is_sold: false }).exec();
+async function rentCar(carId: string, renterId: string) {
+    const car = await Car.findById(carId);
+
+    if (!car) throw { status: 404, message: "Carro não encontrado" };
+
+    if (car.operationType !== "rent" || car.status !== "available") {
+        throw { status: 400, message: "Carro não disponível para aluguel" };
+    }
+    const user = await User.findById(renterId);
+
+    if (!user) throw { status: 404, message: "Usuário não encontrado" };
+
+    car.status = "rented";
+    car.rented_by = user._id;
+    car.rented_at = new Date();
+
+    return await car.save();
 }
 
-async function getAllSold(): Promise<CarType[]> {
-    return await Car.find({ is_sold: true }).exec();
-}
+async function returnRentedCar(carId: string, newMileage: number) {
+    const car = await Car.findById(carId);
 
-async function getAllAvailableToRent(): Promise<CarType[]> {
-    return await Car.find({ is_available: true, is_sold: false }).exec();
+    if (!car) throw { status: 404, message: "Carro não encontrado" };
+
+    if (car.status !== "rented")
+        throw { status: 400, message: "Carro não está alugado" };
+
+    car.status = "available";
+    car.rented_by = undefined;
+    car.rented_at = null;
+    car.mileage = newMileage;
+
+    return await car.save();
 }
 
 async function getById(id: string) {
     return await Car.findById(id).exec();
 }
 
-async function update(id: string, data: Partial<CarType>) {
-    try {
-        const existingCar = await Car.findById(id);
-        if (!existingCar) throw new Error("Carro não encontrado");
+async function getAll() {
+    return await Car.find().exec();
+}
 
-        const updatedCar: CarType = {
-            ...existingCar.toObject(),
-            ...data,
-            details: {
-                ...existingCar.details,
-                ...(data.details || {}),
-            },
-        };
+async function getAllAvailableForRent() {
+    return await Car.find({ operationType: "rent", status: "available" });
+}
 
-        if (data.details || data.mileage !== undefined) {
-            updatedCar.short_description = generateShortDescription(updatedCar);
-        }
+async function getAllAvailableForSale() {
+    return await Car.find({ operationType: "sale", status: "available" });
+}
 
-        await Car.updateOne({ _id: id }, updatedCar);
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
+async function getAllSold() {
+    return await Car.find({ operationType: "sale", status: "sold" });
+}
+
+async function getAllCurrentlyRented() {
+    return await Car.find({ operationType: "rent", status: "rented" });
+}
+
+async function getAllByOwner(ownerId: string) {
+    return await Car.find({ owner_id: ownerId });
+}
+
+async function getAllAvailableForSaleByOwner(ownerId: string) {
+    return await Car.find({
+        owner_id: ownerId,
+        operationType: "sale",
+        status: "available",
+    });
+}
+
+async function getAllAvailableForRentByOwner(ownerId: string) {
+    return await Car.find({
+        owner_id: ownerId,
+        operationType: "rent",
+        status: "available",
+    });
+}
+
+async function updateCar(id: string, data: Partial<CarType>) {
+    const car = await Car.findById(id);
+
+    if (!car) throw { status: 404, message: "Carro não encontrado" };
+
+    Object.assign(car, data);
+
+    car.short_description = generateShortDescription({
+        ...car.toObject(),
+        ...data,
+    });
+
+    return await car.save();
 }
 
 async function remove(id: string) {
     try {
         await Car.findByIdAndDelete(id);
     } catch (error: any) {
-        throw new Error(error.message);
+        throw {
+            status: 500,
+            message: `Erro ao remover carro: ${error.message}`,
+        };
     }
-}
-
-async function sellCar(id: string) {
-    const car = await Car.findById(id);
-
-    if (!car) throw { status: 404, message: "Carro não encontrado" };
-    if (car.is_sold) throw { status: 400, message: "Carro já foi vendido" };
-
-    car.is_sold = true;
-    car.is_available = false;
-    car.sold_at = new Date();
-
-    return await car.save();
-}
-
-async function rentCar(id: string, renterId?: string) {
-    const car = await Car.findById(id);
-
-    if (!car) throw { status: 404, message: "Carro não encontrado" };
-
-    if (!car.is_available)
-        throw { status: 400, message: "Carro indisponível para aluguel" };
-    if (car.is_sold) throw { status: 400, message: "Carro já foi vendido" };
-
-    if (renterId) {
-        const user = await User.findById(renterId);
-
-        if (!user) throw { status: 404, message: "Usuário não encontrado" };
-
-        car.renter_id = user.id;
-    }
-
-    car.is_available = false;
-    car.rented_at = new Date();
-
-    return await car.save();
-}
-
-async function returnCar(id: string, newMileage: number) {
-    const car = await Car.findById(id);
-    if (!car) throw { status: 404, message: "Carro não encontrado" };
-    if (car.is_available)
-        throw { status: 400, message: "Carro já está disponível" };
-
-    car.is_available = true;
-    car.rented_at = null;
-    car.mileage = newMileage;
-    car.renter_id = null;
-
-    return await car.save();
-}
-
-function generateShortDescription(car: Partial<CarType>): string {
-    const { details, mileage } = car;
-    if (!details) return "";
-
-    const brand = details.brand ?? "";
-    const model = details.model ?? "";
-    const mileageString = mileage ? `${mileage.toLocaleString()} km` : "";
-    const year = details.year ? `${details.year}` : "";
-    const transmission = details.transmission ?? "";
-
-    return `${brand.toUpperCase()} ${model.toUpperCase()} ${mileageString} ${year} ${transmission.toUpperCase()}`.trim();
 }
 
 export default {
-    create,
-    getAll,
-    getAllNotSold,
-    getAllSold,
-    getAllAvailableToRent,
-    getById,
-    update,
-    remove,
-    sellCar,
+    createCarForSale,
+    createCarForRent,
+    buyCar,
     rentCar,
-    returnCar,
-    getAllSimplified,
+    returnRentedCar,
+    getById,
+    getAll,
+    getAllAvailableForRent,
+    getAllAvailableForSale,
+    getAllSold,
+    getAllCurrentlyRented,
+    getAllByOwner,
+    updateCar,
+    getAllAvailableForSaleByOwner,
+    getAllAvailableForRentByOwner,
+    create,
+    remove,
 };

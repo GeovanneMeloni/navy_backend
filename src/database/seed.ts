@@ -8,6 +8,7 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { AddressType } from "../models/user/address.schema";
+import { generateShortDescription } from "../utils/car.utils";
 
 const __dirname = dirname(__filename);
 
@@ -135,56 +136,81 @@ function createFakeCar(usersIds: string[]): CarType {
         "automático",
         "semi-automático",
     ]);
+    const color = faker.vehicle.color();
+
+    const operationType = faker.helpers.arrayElement<"sale" | "rent">([
+        "sale",
+        "rent",
+    ]);
+    const ownerId = new mongoose.Types.ObjectId(
+        faker.helpers.arrayElement(usersIds)
+    );
+
     const rented_at = faker.date.past({ years: 1 });
     const sold_at = faker.date.past({ years: 1 });
 
-    const isSold = faker.datatype.boolean();
-    const isAvailableToRent = isSold == false && faker.datatype.boolean();
+    let status: "available" | "rented" | "sold" = "available";
+    let rentedBy: mongoose.Types.ObjectId | undefined;
+    let soldTo: mongoose.Types.ObjectId | undefined;
+    let rentedAt: Date | null = null;
+    let soldAt: Date | null = null;
 
-    let userId: mongoose.Types.ObjectId | undefined = undefined;
-    // Se o carro estiver disponível para alugar ou já vendido, associar a um usuário
-    if (isAvailableToRent || isSold) {
-        const randomNumber = faker.number.int({ min: 0, max: 10 });
-        // 50% de chance de não ter um usuário associado
-        const mockUserId =
-            randomNumber > 5 ? undefined : faker.helpers.arrayElement(usersIds);
-        // Se o mockUserId for undefined, não associar a um usuário
-        if (mockUserId) userId = new mongoose.Types.ObjectId(mockUserId);
+    if (operationType === "sale") {
+        status = faker.datatype.boolean() ? "sold" : "available";
+        if (status === "sold") {
+            soldAt = sold_at;
+            soldTo = new mongoose.Types.ObjectId(
+                faker.helpers.arrayElement(usersIds)
+            );
+        }
+    } else {
+        status = faker.datatype.boolean() ? "rented" : "available";
+        if (status === "rented") {
+            rentedAt = rented_at;
+            rentedBy = new mongoose.Types.ObjectId(
+                faker.helpers.arrayElement(usersIds)
+            );
+        }
     }
 
     const car: CarType = {
-        price: faker.number.int({ min: 30_000, max: 150_000 }),
-        price_per_hour: faker.number.int({ min: 50, max: 200 }),
+        operationType,
+        // Se for venda, o preço é obrigatório
+        price:
+            operationType === "sale"
+                ? faker.number.int({ min: 30_000, max: 150_000 })
+                : undefined,
+        // Se for aluguel, o preço por hora é obrigatório
+        price_per_hour:
+            operationType === "rent"
+                ? faker.number.int({ min: 50, max: 200 })
+                : undefined,
+        // Quilometragem do carro
         mileage,
         license_plate: faker.vehicle.vin().slice(0, 7).toUpperCase(),
-        // photo_url: faker.image.urlPicsumPhotos({ width: 600, height: 400 }),
-        is_available: isAvailableToRent,
-        is_sold: isSold,
-        seller_id: isSold ? userId : undefined,
-        sold_at: isSold ? sold_at : undefined,
-
+        photo_url: undefined,
+        status,
+        rented_at: rentedAt,
+        sold_at: soldAt,
+        rented_by: rentedBy,
+        sold_to: soldTo,
+        //
+        brand,
+        model,
+        year,
+        color,
+        fuel_type: faker.helpers.arrayElement([
+            "gasolina",
+            "álcool",
+            "diesel",
+            "elétrico",
+        ]),
+        transmission,
         address: createFakeAddress(),
-
-        renter_id: isAvailableToRent ? userId : undefined,
-        rented_at: isAvailableToRent ? rented_at : undefined,
-
-        short_description: `${brand.toUpperCase()} ${model.toUpperCase()} ${mileage.toLocaleString()} km ${year} ${transmission.toUpperCase()}`,
-        details: {
-            brand,
-            model,
-            year,
-            color: faker.vehicle.color(),
-            fuel_type: faker.helpers.arrayElement([
-                "gasolina",
-                "álcool",
-                "diesel",
-                "elétrico",
-            ]),
-            transmission,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        owner_id: ownerId,
     };
+
+    car.short_description = generateShortDescription(car);
 
     return car;
 }
