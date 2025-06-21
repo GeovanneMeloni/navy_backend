@@ -8,7 +8,7 @@ const userRouter = Router();
 
 /**
  * @openapi
- * /users/login:
+ * /api/users/login:
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT
  *     requestBody:
@@ -33,7 +33,7 @@ userRouter.post("/login", userController.login);
 
 /**
  * @openapi
- * /users:
+ * /api/users:
  *   get:
  *     summary: Lista todos os usuários (requer autenticação e permissão)
  *     security:
@@ -46,7 +46,7 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
 
 /**
  * @openapi
- * /users/client:
+ * /api/users/client:
  *   post:
  *     summary: Cria um novo cliente com foto e documento
  *     requestBody:
@@ -96,7 +96,7 @@ userRouter.post(
 
 /**
  * @openapi
- * /users/client:
+ * /api/users/client:
  *   post:
  *     summary: Cria um novo cliente com foto e documento
  *     requestBody:
@@ -136,7 +136,7 @@ userRouter.post(
 
 /**
  * @openapi
- * /users/{id}:
+ * /api/users/{id}:
  *   put:
  *     summary: Atualiza um usuário existente
  *     security:
@@ -170,7 +170,7 @@ userRouter.put("/:id", auth, checkPermission("edit"), userController.update);
 
 /**
  * @openapi
- * /users/{id}:
+ * /api/users/{id}:
  *   patch:
  *     summary: Altera o status de um usuário
  *     security:
@@ -194,7 +194,7 @@ userRouter.patch(
 
 /**
  * @openapi
- * /users/{id}:
+ * /api/users/{id}:
  *   delete:
  *     summary: Remove um usuário
  *     security:

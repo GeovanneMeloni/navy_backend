@@ -11,6 +11,20 @@ const options: swaggerJSDoc.Options = {
             version: "1.0.0",
             description: "API para venda e aluguel de carros",
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
         servers: [
             {
                 url: "http://localhost:3000", // Altere para sua URL real

@@ -8,7 +8,7 @@ const carRouter = Router();
 // Criação
 /**
  * @openapi
- * /cars:
+ * /api/cars:
  *   post:
  *     summary: Cria um novo carro (geral)
  *     consumes:
@@ -74,7 +74,7 @@ carRouter.post("/", upload.fields([{ name: "photo" }]), carController.create);
 
 /**
  * @openapi
- * /cars:
+ * /api/cars:
  *   post:
  *     summary: Cria um novo carro para venda
  *     consumes:
@@ -141,7 +141,7 @@ carRouter.post(
 
 /**
  * @openapi
- * /cars:
+ * /api/cars:
  *   post:
  *     summary: Cria um novo carro para aluguel/locação
  *     consumes:
@@ -208,7 +208,7 @@ carRouter.post(
 
 /**
  * @openapi
- * /cars:
+ * /api/cars:
  *   patch:
  *     summary: Realiza a compra de um carro
  *     consumes:
@@ -271,7 +271,7 @@ carRouter.put("/:id", upload.fields([{ name: "photo" }]), carController.update);
 
 /**
  * @openapi
- * /cars/buy/{id}:
+ * /api/cars/buy/{id}:
  *   patch:
  *     summary: Realiza a compra de um carro
  */
@@ -279,7 +279,7 @@ carRouter.patch("/buy/:id", carController.buy);
 
 /**
  * @openapi
- * /cars/rent/{id}:
+ * /api/cars/rent/{id}:
  *   patch:
  *     summary: Realiza o aluguel de um carro
  */
@@ -287,7 +287,7 @@ carRouter.patch("/rent/:id", carController.rent);
 
 /**
  * @openapi
- * /cars/return/{id}:
+ * /api/cars/return/{id}:
  *   patch:
  *     summary: Realiza a devolução de um carro alugado
  */
@@ -295,7 +295,7 @@ carRouter.patch("/return/:id", carController.returnCar);
 
 /**
  * @openapi
- * /cars:
+ * /api/cars:
  *   get:
  *     summary: Lista todos os carros
  */
@@ -303,7 +303,7 @@ carRouter.get("/", carController.list);
 
 /**
  * @openapi
- * /cars/available/sale:
+ * /api/cars/available/sale:
  *   get:
  *     summary: Lista todos os carros disponíveis para venda
  */
@@ -311,7 +311,7 @@ carRouter.get("/available/sale", carController.listAvailableForSale);
 
 /**
  * @openapi
- * /cars/available/rent:
+ * /api/cars/available/rent:
  *   get:
  *     summary: Lista todos os carros disponíveis para aluguel
  */
@@ -319,7 +319,7 @@ carRouter.get("/available/rent", carController.listAvailableForRent);
 
 /**
  * @openapi
- * /cars/sold:
+ * /api/cars/sold:
  *   get:
  *     summary: Lista todos os carros vendidos
  */
@@ -327,7 +327,7 @@ carRouter.get("/sold", carController.listSold);
 
 /**
  * @openapi
- * /cars/rented:
+ * /api/cars/rented:
  *   get:
  *     summary: Lista todos os carros atualmente alugados
  */
@@ -335,7 +335,7 @@ carRouter.get("/rented", carController.listCurrentlyRented);
 
 /**
  * @openapi
- * /cars/owner/{ownerId}:
+ * /api/cars/owner/{ownerId}:
  *   get:
  *     summary: Lista todos os carros de um proprietário, dado o ID do proprietário (user)
  */
@@ -343,7 +343,7 @@ carRouter.get("/owner/:ownerId", carController.listByOwner);
 
 /**
  * @openapi
- * /cars/owner/{ownerId}/available/sale:
+ * /api/cars/owner/{ownerId}/available/sale:
  *   get:
  *     summary: Lista os carros disponíveis para venda de um proprietário
  */
@@ -354,7 +354,7 @@ carRouter.get(
 
 /**
  * @openapi
- * /cars/owner/{ownerId}/available/rent:
+ * /api/cars/owner/{ownerId}/available/rent:
  *   get:
  *     summary: Lista os carros disponíveis para aluguel de um proprietário
  */
@@ -365,7 +365,7 @@ carRouter.get(
 
 /**
  * @openapi
- * /cars/{id}:
+ * /api/cars/{id}:
  *   get:
  *     summary: Busca um carro pelo ID
  */
@@ -373,7 +373,7 @@ carRouter.get("/:id", carController.getById);
 
 /**
  * @openapi
- * /cars/{id}:
+ * /api/cars/{id}:
  *   delete:
  *     summary: Remove um carro
  */
