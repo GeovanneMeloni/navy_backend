@@ -240,7 +240,7 @@ async function getById(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
 
         // validar id do mongo
-        if (mongoose.Types.ObjectId.isValid(id) === false) {
+        if (mongoose.Types.ObjectId.isValid(id) == false) {
             throw { status: 400, message: "ID do carro inválido" };
         }
         const car = await carService.getById(id);

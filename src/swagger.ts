@@ -8,7 +8,7 @@ const options: swaggerJSDoc.Options = {
         openapi: "3.0.0",
         info: {
             title: "Navy Backend API",
-            version: "1.0.1",
+            version: "1.0.2",
             description: "API para venda e aluguel de carros",
         },
         components: {
@@ -28,6 +28,9 @@ const options: swaggerJSDoc.Options = {
         servers: [
             {
                 url: "http://localhost:3000", // Altere para sua URL real
+            },
+            {
+                url: "https://navy-backend.onrender.com/", // Altere para sua URL real
             },
         ],
     },

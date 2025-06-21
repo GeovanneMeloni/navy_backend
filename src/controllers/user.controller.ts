@@ -143,7 +143,7 @@ async function list(req: Request, res: Response, next: NextFunction) {
 async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const body: IUser = req.body;
-        const { id } = req.query;
+        const { id } = req.params; // ver se é req.params ou req.query
         await userService.update(String(id), body);
         res.status(204).json({ message: `Atualizado usuário ${id}` });
     } catch (error) {
@@ -153,7 +153,7 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
 async function remove(req: Request, res: Response, next: NextFunction) {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
 
         if (!id || !mongoose.isValidObjectId(String(id))) {
             res.status(400).json({ message: "ID inválido" });
@@ -168,9 +168,47 @@ async function remove(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function getById(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+
+        if (!id || !mongoose.isValidObjectId(String(id))) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
+
+        const user = await userService.getById(String(id));
+
+        if (!user) {
+            res.status(404).json({ message: "Usuário não encontrado" });
+            return;
+        }
+
+        const fotoPath = user.user_profile?.foto;
+        const docPath = user.user_profile?.document;
+
+        const [signedFotoUrl, signedDocUrl] = await Promise.all([
+            fotoPath ? getSignedUrl(fotoPath) : null,
+            docPath ? getSignedUrl(docPath) : null,
+        ]);
+
+        res.status(200).json({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            userType: user.userType,
+            active: user.active,
+            foto: signedFotoUrl,
+            document: signedDocUrl,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function changeStatus(req: Request, res: Response, next: NextFunction) {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
         await userService.changeStatus(String(id));
         res.status(204).json({ message: "Status atualizado com sucesso" });
     } catch (error) {
@@ -186,4 +224,5 @@ export default {
     update,
     changeStatus,
     remove,
+    getById,
 };

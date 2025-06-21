@@ -35,6 +35,10 @@ async function list() {
     return User.find();
 }
 
+async function getById(id: string) {
+    return await User.findById(id);
+}
+
 async function update(id: string, data: IUser) {
     try {
         await User.updateOne({ _id: id }, data);
@@ -72,4 +76,5 @@ export default {
     update,
     changeStatus,
     remove,
+    getById,
 };

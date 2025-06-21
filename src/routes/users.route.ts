@@ -230,4 +230,25 @@ userRouter.delete(
     userController.remove
 );
 
+/**
+ * @openapi
+ * /api/users/{id}:
+ *   get:
+ *     summary: Obtém um usuário por ID
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuário encontrado
+ */
+userRouter.get("/:id", userController.getById);
+
 export { userRouter };
