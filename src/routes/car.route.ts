@@ -10,7 +10,10 @@ const carRouter = Router();
  * @openapi
  * /api/cars:
  *   post:
- *     summary: Cria um novo carro (geral)
+ *     summary: Cria um novo carro
+ *     description: Cria um novo carro com as informações fornecidas. O campo photo é opcional e deve ser enviado como um arquivo, o campo operationType indica se é aluguel ou para venda.
+ *     tags:
+ *       - Car
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -74,9 +77,12 @@ carRouter.post("/", upload.fields([{ name: "photo" }]), carController.create);
 
 /**
  * @openapi
- * /api/cars:
+ * /api/cars/sale:
  *   post:
  *     summary: Cria um novo carro para venda
+ *     description: Cria um novo carro com as informações fornecidas. O campo operationType não é necessário, pois este endpoint é específico para venda (vai ser sale).
+ *     tags:
+ *       - Car
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -141,9 +147,12 @@ carRouter.post(
 
 /**
  * @openapi
- * /api/cars:
+ * /api/cars/rent:
  *   post:
  *     summary: Cria um novo carro para aluguel/locação
+ *     description: Cria um novo carro com as informações fornecidas. O campo operationType não é necessário, pois este endpoint é específico para alugar (vai ser rent).
+ *     tags:
+ *       - Car
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -209,8 +218,10 @@ carRouter.post(
 /**
  * @openapi
  * /api/cars:
- *   patch:
- *     summary: Realiza a compra de um carro
+ *   put:
+ *     summary: Atualiza um carro existente
+ *     tags:
+ *       - Car
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -274,6 +285,12 @@ carRouter.put("/:id", upload.fields([{ name: "photo" }]), carController.update);
  * /api/cars/buy/{id}:
  *   patch:
  *     summary: Realiza a compra de um carro
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
  */
 carRouter.patch("/buy/:id", carController.buy);
 
@@ -282,6 +299,12 @@ carRouter.patch("/buy/:id", carController.buy);
  * /api/cars/rent/{id}:
  *   patch:
  *     summary: Realiza o aluguel de um carro
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
  */
 carRouter.patch("/rent/:id", carController.rent);
 
@@ -290,6 +313,12 @@ carRouter.patch("/rent/:id", carController.rent);
  * /api/cars/return/{id}:
  *   patch:
  *     summary: Realiza a devolução de um carro alugado
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
  */
 carRouter.patch("/return/:id", carController.returnCar);
 
@@ -298,6 +327,11 @@ carRouter.patch("/return/:id", carController.returnCar);
  * /api/cars:
  *   get:
  *     summary: Lista todos os carros
+ *     tags:
+ *       - Car
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/", carController.list);
 
@@ -306,6 +340,11 @@ carRouter.get("/", carController.list);
  * /api/cars/available/sale:
  *   get:
  *     summary: Lista todos os carros disponíveis para venda
+ *     tags:
+ *       - Car
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/available/sale", carController.listAvailableForSale);
 
@@ -314,6 +353,11 @@ carRouter.get("/available/sale", carController.listAvailableForSale);
  * /api/cars/available/rent:
  *   get:
  *     summary: Lista todos os carros disponíveis para aluguel
+ *     tags:
+ *       - Car
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/available/rent", carController.listAvailableForRent);
 
@@ -322,6 +366,11 @@ carRouter.get("/available/rent", carController.listAvailableForRent);
  * /api/cars/sold:
  *   get:
  *     summary: Lista todos os carros vendidos
+ *     tags:
+ *       - Car
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/sold", carController.listSold);
 
@@ -330,6 +379,11 @@ carRouter.get("/sold", carController.listSold);
  * /api/cars/rented:
  *   get:
  *     summary: Lista todos os carros atualmente alugados
+ *     tags:
+ *       - Car
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/rented", carController.listCurrentlyRented);
 
@@ -338,6 +392,15 @@ carRouter.get("/rented", carController.listCurrentlyRented);
  * /api/cars/owner/{ownerId}:
  *   get:
  *     summary: Lista todos os carros de um proprietário, dado o ID do proprietário (user)
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: ownerId
+ *         required: true
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get("/owner/:ownerId", carController.listByOwner);
 
@@ -346,6 +409,15 @@ carRouter.get("/owner/:ownerId", carController.listByOwner);
  * /api/cars/owner/{ownerId}/available/sale:
  *   get:
  *     summary: Lista os carros disponíveis para venda de um proprietário
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: ownerId
+ *         required: true
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get(
     "/owner/:ownerId/available/sale",
@@ -357,6 +429,15 @@ carRouter.get(
  * /api/cars/owner/{ownerId}/available/rent:
  *   get:
  *     summary: Lista os carros disponíveis para aluguel de um proprietário
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: ownerId
+ *         required: true
+ *     responses:
+ *       200:
+ *        description: Lista de carros retornada com sucesso
  */
 carRouter.get(
     "/owner/:ownerId/available/rent",
@@ -368,6 +449,15 @@ carRouter.get(
  * /api/cars/{id}:
  *   get:
  *     summary: Busca um carro pelo ID
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *        description: Carro encontrado com sucesso
  */
 carRouter.get("/:id", carController.getById);
 
@@ -376,6 +466,15 @@ carRouter.get("/:id", carController.getById);
  * /api/cars/{id}:
  *   delete:
  *     summary: Remove um carro
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       204:
+ *        description: Carro removido com sucesso
  */
 carRouter.delete("/:id", carController.remove);
 

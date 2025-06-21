@@ -11,6 +11,8 @@ const userRouter = Router();
  * /api/users/login:
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT
+ *     tags:
+ *     - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -36,6 +38,8 @@ userRouter.post("/login", userController.login);
  * /api/users:
  *   get:
  *     summary: Lista todos os usuários (requer autenticação e permissão)
+ *     tags:
+ *     - Users
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -49,6 +53,8 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
  * /api/users/client:
  *   post:
  *     summary: Cria um novo cliente com foto e documento
+ *     tags:
+ *     - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -99,6 +105,8 @@ userRouter.post(
  * /api/users/client:
  *   post:
  *     summary: Cria um novo cliente com foto e documento
+ *     tags:
+ *      - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -139,6 +147,8 @@ userRouter.post(
  * /api/users/{id}:
  *   put:
  *     summary: Atualiza um usuário existente
+ *     tags:
+ *       - Users
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -173,6 +183,8 @@ userRouter.put("/:id", auth, checkPermission("edit"), userController.update);
  * /api/users/{id}:
  *   patch:
  *     summary: Altera o status de um usuário
+ *     tags:
+ *       - Users
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -197,6 +209,8 @@ userRouter.patch(
  * /api/users/{id}:
  *   delete:
  *     summary: Remove um usuário
+ *     tags:
+ *       - Users
  *     security:
  *       - bearerAuth: []
  *     parameters:

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import carService from "../services/car.service";
 import { getSignedUrl, uploadFile } from "../utils/bucket";
 import { formatCarRequestData, GetCarWithSignedUrl } from "../utils/car.utils";
+import mongoose from "mongoose";
 
 // métodos post
 async function create(
@@ -64,7 +65,16 @@ async function createForRent(
 async function buy(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        if (mongoose.Types.ObjectId.isValid(id) === false) {
+            throw { status: 400, message: "ID do carro inválido" };
+        }
+
         const { buyerId } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(buyerId)) {
+            throw { status: 400, message: "ID do comprador inválido" };
+        }
 
         await carService.buyCar(id, buyerId);
 
@@ -77,7 +87,16 @@ async function buy(req: Request, res: Response, next: NextFunction) {
 async function rent(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        if (mongoose.Types.ObjectId.isValid(id) === false) {
+            throw { status: 400, message: "ID do carro inválido" };
+        }
+
         const { renterId } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(renterId)) {
+            throw { status: 400, message: "ID do locatário inválido" };
+        }
 
         await carService.rentCar(id, renterId);
 
@@ -90,6 +109,11 @@ async function rent(req: Request, res: Response, next: NextFunction) {
 async function returnCar(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        if (mongoose.Types.ObjectId.isValid(id) === false) {
+            throw { status: 400, message: "ID do carro inválido" };
+        }
+
         const { newMileage } = req.body;
         await carService.returnRentedCar(id, newMileage);
         res.status(200).json({ message: `Carro ${id} devolvido com sucesso` });
@@ -214,7 +238,16 @@ async function listAvailableForRentByOwner(
 async function getById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        // validar id do mongo
+        if (mongoose.Types.ObjectId.isValid(id) === false) {
+            throw { status: 400, message: "ID do carro inválido" };
+        }
         const car = await carService.getById(id);
+
+        if (!car) {
+            throw { status: 404, message: "Carro não encontrado" };
+        }
 
         const carWithUrl = await GetCarWithSignedUrl(car);
 

@@ -7,8 +7,8 @@ const options: swaggerJSDoc.Options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Navy Fleet API",
-            version: "1.0.0",
+            title: "Navy Backend API",
+            version: "1.0.1",
             description: "API para venda e aluguel de carros",
         },
         components: {
