@@ -10,20 +10,12 @@ async function create(
     next: NextFunction
 ): Promise<any> {
     try {
-        const file = req.files["photo"]?.[0];
-
-        let photoCarUrl: string = undefined;
-
-        if (file) {
-            photoCarUrl = await uploadFile(
-                file.buffer,
-                `fotos/${Date.now()}_${file.originalname}`
-            );
-        }
+        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
         const data = formatCarRequestData(req, photoCarUrl);
 
         await carService.create(data);
+
         res.status(201).json({ message: "Carro criado com sucesso" });
     } catch (error) {
         next(error);
@@ -36,16 +28,7 @@ async function createForSale(
     next: NextFunction
 ): Promise<any> {
     try {
-        const file = req.files["photo"]?.[0];
-
-        let photoCarUrl: string = undefined;
-
-        if (file) {
-            photoCarUrl = await uploadFile(
-                file.buffer,
-                `fotos/${Date.now()}_${file.originalname}`
-            );
-        }
+        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
         const data = formatCarRequestData(req, photoCarUrl);
 
@@ -64,16 +47,7 @@ async function createForRent(
     next: NextFunction
 ): Promise<any> {
     try {
-        const file = req.files["photo"]?.[0];
-
-        let photoCarUrl: string = undefined;
-
-        if (file) {
-            photoCarUrl = await uploadFile(
-                file.buffer,
-                `fotos/${Date.now()}_${file.originalname}`
-            );
-        }
+        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
         const data = formatCarRequestData(req, photoCarUrl);
 
@@ -256,14 +230,9 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
         const data = req.body;
 
-        const file = req.files?.[0];
+        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
-        if (file) {
-            const photoCarUrl = await uploadFile(
-                file.buffer,
-                `fotos/${Date.now()}_${file.originalname}`
-            );
-
+        if (photoCarUrl) {
             data.photo_url = photoCarUrl;
         }
 
@@ -284,6 +253,23 @@ async function remove(req: Request, res: Response, next: NextFunction) {
         res.status(204).send();
     } catch (error) {
         next(error);
+    }
+}
+
+async function GetAndUploadCarPhoto(req: Request): Promise<string | undefined> {
+    const file = req.files["photo"]?.[0];
+
+    if (!file) return undefined;
+
+    try {
+        const photoCarUrl = await uploadFile(
+            file.buffer,
+            `fotos/${Date.now()}_${file.originalname}`
+        );
+        return photoCarUrl;
+    } catch (error) {
+        console.error("Erro ao fazer upload da foto do carro:", error);
+        throw { status: 500, message: "Erro ao fazer upload da foto do carro" };
     }
 }
 

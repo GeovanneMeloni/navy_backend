@@ -1,5 +1,4 @@
 import { InferSchemaType, Schema, model } from "mongoose";
-import { CarDetailsSchema } from "./carDetails.schema";
 import { AddressSchema } from "../user/address.schema";
 // Carros disponíveis para venda ou aluguel / Frota
 export const CarSchema = new Schema(
@@ -73,11 +72,6 @@ export const CarSchema = new Schema(
             required: false,
             description: "Descrição resumida do carro (gerada automaticamente)",
         },
-        details: {
-            type: CarDetailsSchema,
-            required: true,
-            description: "Subdocumento com os detalhes técnicos do carro",
-        },
         mileage: {
             type: Number,
             required: false,
@@ -96,8 +90,50 @@ export const CarSchema = new Schema(
             required: true,
             description: "ID do proprietário/anunciante do carro",
         },
+
+        group: {
+            type: String,
+            required: false,
+            description: "Grupo do carro (ex: Econômico, SUV, Luxo)",
+        }, // Grupo do carro (ex: Econômico, SUV)
+
+        model: {
+            type: String,
+            required: true,
+            description: "Modelo do carro (ex: Corolla, Onix)",
+        }, // Modelo do carro (ex: Corolla, Onix)
+
+        brand: {
+            type: String,
+            required: true,
+            description: "Marca do carro (ex: Toyota, Chevrolet)",
+        }, // Marca (ex: Toyota, Chevrolet)
+
+        year: {
+            type: Number,
+            required: true,
+            description: "Ano de fabricação do carro (ex: 2020)",
+        }, // Ano de fabricação
+
+        color: {
+            type: String,
+            required: true,
+            description: "Cor do carro (ex: Preto, Branco)",
+        }, // Cor do carro
+
+        fuel_type: {
+            type: String,
+            required: false,
+            description: "Tipo de combustível do carro (ex: Gasolina, Etanol)",
+        }, // Tipo de combustível (ex: Gasolina, Etanol)
+
+        transmission: {
+            type: String,
+            required: false,
+            description: "Transmissão do carro (ex: Automático, Manual)",
+        }, // Automático / Manual
     },
-    { timestamps: true, versionKey: false }
+    { versionKey: false }
 );
 
 export type CarType = InferSchemaType<typeof CarSchema>;

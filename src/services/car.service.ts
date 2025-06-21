@@ -165,12 +165,11 @@ async function updateCar(id: string, data: Partial<CarType>) {
 
     Object.assign(car, data);
 
-    if (data.details || data.mileage !== undefined) {
-        car.short_description = generateShortDescription({
-            ...car.toObject(),
-            ...data,
-        });
-    }
+    car.short_description = generateShortDescription({
+        ...car.toObject(),
+        ...data,
+    });
+
     return await car.save();
 }
 

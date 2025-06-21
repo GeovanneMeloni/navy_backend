@@ -1,18 +1,16 @@
+import mongoose from "mongoose";
+import { ICreateCar } from "../interface/global";
 import { CarType } from "../models/car/car.model";
+import { AddressType } from "../models/user/address.schema";
 import { getSignedUrl } from "./bucket";
 
 // Gera uma descrição resumida do carro
 // com base nos detalhes e quilometragem
 // Exemplo: "FORD FOCUS 120000 km 2018 AUTOMATICO"
 function generateShortDescription(car: Partial<CarType>): string {
-    const { details, mileage } = car;
-    if (!details) return "";
+    const { mileage, brand, model, year, transmission } = car;
 
-    const brand = details.brand ?? "";
-    const model = details.model ?? "";
     const mileageString = mileage ? `${mileage.toLocaleString()} km` : "0 km";
-    const year = details.year ? `${details.year}` : "";
-    const transmission = details.transmission ?? "";
 
     return `${brand.toUpperCase()} ${model.toUpperCase()} ${mileageString} ${year} ${transmission.toUpperCase()}`.trim();
 }
@@ -34,44 +32,36 @@ async function GetCarWithSignedUrl(car: CarType): Promise<CarType> {
 
 import { Request } from "express";
 
-export function formatCarRequestData(req: Request, photo_url?: string) {
+export function formatCarRequestData(
+    req: Request,
+    photo_url?: string
+): CarType {
     const {
-        group,
-        model,
-        brand,
-        year,
-        color,
-        fuel_type,
-        transmission,
-
-        // Endereço e localização (embora venham "planos" no req.body)
+        operationType,
+        status,
+        rented_at,
+        sold_at,
+        rented_by,
+        sold_to,
+        owner_id,
+        // Endereço e localização
         cep,
         rua,
         numero,
         logradouro,
         estado,
         municipio,
+
         latitude,
         longitude,
-
-        ...body
-    } = req.body;
-
-    const details = {
-        group,
-        model,
-        brand,
-        year,
-        color,
-        fuel_type,
-        transmission,
-    };
+        ...rest
+    }: ICreateCar = req.body;
 
     const hasAddressData =
         cep || rua || numero || logradouro || estado || municipio;
     const hasLocationData = latitude || longitude;
 
-    let address: any = undefined;
+    let address: AddressType = undefined;
 
     if (hasAddressData) {
         address = {
@@ -91,12 +81,20 @@ export function formatCarRequestData(req: Request, photo_url?: string) {
         }
     }
 
-    return {
-        ...body,
-        details,
-        address,
-        photo_url,
+    const data: CarType = {
+        ...rest,
+        operationType,
+        status,
+        rented_at,
+        sold_at,
+        rented_by: new mongoose.Types.ObjectId(rented_by) || undefined,
+        sold_to: new mongoose.Types.ObjectId(sold_to) || undefined,
+        owner_id: new mongoose.Types.ObjectId(owner_id) || undefined,
+        address: address,
+        photo_url: photo_url || undefined,
     };
+
+    return data;
 }
 
 export { generateShortDescription, GetCarWithSignedUrl };

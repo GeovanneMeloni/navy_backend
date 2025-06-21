@@ -195,23 +195,19 @@ function createFakeCar(usersIds: string[]): CarType {
         rented_by: rentedBy,
         sold_to: soldTo,
         //
-        details: {
-            brand,
-            model,
-            year,
-            color,
-            fuel_type: faker.helpers.arrayElement([
-                "gasolina",
-                "álcool",
-                "diesel",
-                "elétrico",
-            ]),
-            transmission,
-        },
+        brand,
+        model,
+        year,
+        color,
+        fuel_type: faker.helpers.arrayElement([
+            "gasolina",
+            "álcool",
+            "diesel",
+            "elétrico",
+        ]),
+        transmission,
         address: createFakeAddress(),
         owner_id: ownerId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
     };
 
     car.short_description = generateShortDescription(car);
