@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import initRoutes from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
+import { setupSwagger } from "./swagger";
 
 const app = e();
 mongoose
@@ -16,8 +17,11 @@ app.use(cors());
 
 app.use("/api", initRoutes);
 
+setupSwagger(app);
+
 app.use(errorHandler);
 
-app.listen(3000, () =>
-    console.log(`Executando na porta: http://localhost:3000/api`)
-);
+app.listen(3000, () => {
+    console.log(`Executando na porta: http://localhost:3000/api`);
+    console.log(`Swagger disponível em: http://localhost:3000/swagger`);
+});

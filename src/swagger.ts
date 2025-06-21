@@ -1,0 +1,27 @@
+// src/swagger.ts
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { Express } from "express";
+
+const options: swaggerJSDoc.Options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Navy Fleet API",
+            version: "1.0.0",
+            description: "API para venda e aluguel de carros",
+        },
+        servers: [
+            {
+                url: "http://localhost:3000", // Altere para sua URL real
+            },
+        ],
+    },
+    apis: ["./src/routes/*.ts", "./src/controllers/*.ts", "./src/models/*.ts"],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+export function setupSwagger(app: Express) {
+    app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
