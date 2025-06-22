@@ -50,11 +50,13 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
 
 /**
  * @openapi
- * /api/users/client:
+ * /api/users/employee:
  *   post:
- *     summary: Cria um novo cliente com foto e documento
+ *     summary: Cria um novo operador
  *     tags:
- *     - Users
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -74,6 +76,16 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
  *                 type: string
  *               cpf:
  *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum:
+ *                   - admin
+ *                   - employee
+ *               userType:
+ *                 type: string
+ *                 enum:
+ *                   - company
+ *                   - navy
  *               foto:
  *                 type: string
  *                 format: binary
@@ -87,11 +99,10 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
  *               - phone
  *               - rg
  *               - cpf
- *               - foto
- *               - document
+ *               - role
  *     responses:
  *       201:
- *         description: Cliente criado com sucesso
+ *         description: Operador criado com sucesso
  */
 userRouter.post(
     "/employee",
@@ -106,7 +117,7 @@ userRouter.post(
  *   post:
  *     summary: Cria um novo cliente com foto e documento
  *     tags:
- *      - Users
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -126,12 +137,59 @@ userRouter.post(
  *                 type: string
  *               cpf:
  *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum:
+ *                   - masculino
+ *                   - feminino
+ *                   - outro
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   cep:
+ *                     type: string
+ *                   rua:
+ *                     type: string
+ *                   numero:
+ *                     type: string
+ *                   logradouro:
+ *                     type: string
+ *                   estado:
+ *                     type: string
+ *                   municipio:
+ *                     type: string
+ *                   location:
+ *                     type: object
+ *                     properties:
+ *                       latitude:
+ *                         type: number
+ *                       longitude:
+ *                         type: number
+ *                 required:
+ *                   - cep
+ *                   - rua
+ *                   - numero
+ *                   - logradouro
+ *                   - estado
+ *                   - municipio
+ *                   - location
  *               foto:
  *                 type: string
  *                 format: binary
  *               document:
  *                 type: string
  *                 format: binary
+ *             required:
+ *               - email
+ *               - password
+ *               - name
+ *               - phone
+ *               - rg
+ *               - cpf
+ *               - gender
+ *               - address
+ *               - foto
+ *               - document
  *     responses:
  *       201:
  *         description: Cliente criado com sucesso
@@ -146,7 +204,7 @@ userRouter.post(
  * @openapi
  * /api/users/{id}:
  *   put:
- *     summary: Atualiza um usuário existente
+ *     summary: Atualiza um usuário existente (perfil e arquivos)
  *     tags:
  *       - Users
  *     security:
@@ -160,23 +218,63 @@ userRouter.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               email:
  *                 type: string
- *               password:
+ *               name:
  *                 type: string
- *               active:
+ *               phone:
  *                 type: string
- *               role:
+ *               gender:
  *                 type: string
+ *                 enum:
+ *                   - masculino
+ *                   - feminino
+ *                   - outro
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   cep:
+ *                     type: string
+ *                   rua:
+ *                     type: string
+ *                   numero:
+ *                     type: string
+ *                   logradouro:
+ *                     type: string
+ *                   estado:
+ *                     type: string
+ *                   municipio:
+ *                     type: string
+ *                   location:
+ *                     type: object
+ *                     properties:
+ *                       latitude:
+ *                         type: number
+ *                       longitude:
+ *                         type: number
+ *               foto:
+ *                 type: string
+ *                 format: binary
+ *               document:
+ *                 type: string
+ *                 format: binary
+ *             # Nenhum campo é estritamente obrigatório aqui:
+ *             # envie apenas os que quiser atualizar
  *     responses:
  *       204:
  *         description: Usuário atualizado com sucesso
  */
-userRouter.put("/:id", auth, checkPermission("edit"), userController.update);
+userRouter.put(
+    "/:id",
+    auth,
+    checkPermission("edit"),
+    upload.fields([{ name: "foto" }, { name: "document" }]),
+    userController.update
+);
 
 /**
  * @openapi

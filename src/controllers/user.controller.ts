@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
 import { ICreateUser, IUser } from "../interface/global";
 import { UserType } from "../models/user/user.model";
-import { getSignedUrl, uploadFile } from "../utils/bucket";
+import { uploadFile } from "../utils/bucket";
+import mongoose from "mongoose";
+import { attachSignedUrlsToProfile, saveProfileFiles } from "../utils/user.utils";
 
 async function login(req: Request, res: Response, next: NextFunction) {
     try {
@@ -115,40 +117,40 @@ async function list(req: Request, res: Response, next: NextFunction) {
     const rawUsers = await userService.list();
 
     const users = await Promise.all(
-        rawUsers.map(async (e) => {
-            const fotoPath = e.user_profile?.foto;
-            const docPath = e.user_profile?.document;
-
-            const [signedFotoUrl, signedDocUrl] = await Promise.all([
-                fotoPath ? getSignedUrl(fotoPath) : null,
-                docPath ? getSignedUrl(docPath) : null,
-            ]);
-
-            return {
-                id: e.id,
-                email: e.email,
-                role: e.role,
-                userType: e.userType,
-                active: e.active,
-                foto: signedFotoUrl,
-                document: signedDocUrl,
-            };
-        })
+        rawUsers.map(attachSignedUrlsToProfile)
     );
-
     res.status(200).json(users);
 }
 
 async function update(req: Request, res: Response, next: NextFunction) {
-    try {
-        const body: IUser = req.body;
-        const { id } = req.params; // ver se é req.params ou req.query
-        await userService.update(String(id), body);
-        res.status(204).json({ message: `Atualizado usuário ${id}` });
-    } catch (error) {
-        next(error);
+  try {
+    const { id } = req.params;
+    const body = req.body;
+    let uploadResult: any = {};
+
+    if (req.files && (req.files["foto"] || req.files["document"])) {
+      // busca paths antigos para removê-los
+      const user = await userService.getById(String(id));
+      const old = user.user_profile;
+
+      uploadResult = await saveProfileFiles(
+        { foto: req.files["foto"], document: req.files["document"] },
+        { foto: old.foto, document: old.document }
+      );
+
+      body.user_profile = {
+        ...(body.user_profile ?? {}),
+        ...uploadResult,
+      };
     }
+
+    await userService.update(String(id), body);
+    res.status(204).json({ message: `Usuário ${id} atualizado` });
+  } catch (error: any) {
+    next(error);
+  }
 }
+
 
 async function remove(req: Request, res: Response, next: NextFunction) {
     try {
@@ -176,30 +178,16 @@ async function getById(req: Request, res: Response, next: NextFunction) {
             return;
         }
 
-        const user = await userService.getById(String(id));
+        const rawUser = await userService.getById(String(id));
 
-        if (!user) {
+        if (!rawUser) {
             res.status(404).json({ message: "Usuário não encontrado" });
             return;
         }
 
-        const fotoPath = user.user_profile?.foto;
-        const docPath = user.user_profile?.document;
+        const user = await attachSignedUrlsToProfile(rawUser)
 
-        const [signedFotoUrl, signedDocUrl] = await Promise.all([
-            fotoPath ? getSignedUrl(fotoPath) : null,
-            docPath ? getSignedUrl(docPath) : null,
-        ]);
-
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            userType: user.userType,
-            active: user.active,
-            foto: signedFotoUrl,
-            document: signedDocUrl,
-        });
+        res.status(200).json(user);
     } catch (error) {
         next(error);
     }

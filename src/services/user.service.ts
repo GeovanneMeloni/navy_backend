@@ -31,14 +31,14 @@ async function create(data: UserType) {
 }
 
 async function list() {
-    return User.find();
+    return User.find({}, { password: 0 }).exec();
 }
 
 async function getById(id: string) {
-    return await User.findById(id);
+    return await User.findById(id, { password: 0 });
 }
 
-async function update(id: string, data: IUser) {
+async function update(id: string, data) {
     try {
         await User.updateOne({ _id: id }, data);
     } catch (error) {
