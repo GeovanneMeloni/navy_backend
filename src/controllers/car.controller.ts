@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import carService from "../services/car.service";
-import { getSignedUrl, uploadFile } from "../utils/bucket";
+import { uploadFile } from "../utils/bucket";
 import { formatCarRequestData, GetCarWithSignedUrl } from "../utils/car.utils";
 import mongoose from "mongoose";
 
@@ -11,52 +11,16 @@ async function create(
     next: NextFunction
 ): Promise<any> {
     try {
-        const file = req.files[0];
+        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
-        if (!file) {
-            res.status(400).json({
-                message: "Foto do carro é obrigatório",
-            });
-            return;
-        }
+        const data = formatCarRequestData(req, photoCarUrl);
 
-        const photoCarUrl = await uploadFile(
-            file.buffer,
-            `fotos/${Date.now()}_${file.originalname}`
-        );
-
-        const {
-            group,
-            model,
-            brand,
-            year,
-            color,
-            fuel_type,
-            transmission,
-            ...body
-        } = req.body;
-
-        const details = {
-            group,
-            model,
-            brand,
-            year,
-            color,
-            fuel_type,
-            transmission,
-        };
-
-        const data = {
-            ...body,
-            details,
-            photo_url: photoCarUrl,
-        };
         await carService.create(data);
 
         res.status(201).json({ message: "Carro criado com sucesso" });
     } catch (error) {
         console.log(error);
-        
+
         next(error);
     }
 }
@@ -157,106 +121,7 @@ async function returnCar(req: Request, res: Response, next: NextFunction) {
         res.status(200).json({ message: `Carro ${id} devolvido com sucesso` });
     } catch (error) {
         console.log(error);
-        
-        next(error);
-    }
-}
 
-async function createForSale(
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<any> {
-    try {
-        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
-
-        const data = formatCarRequestData(req, photoCarUrl);
-
-        await carService.createCarForSale(data);
-        res.status(201).json({
-            message: "Carro para venda criado com sucesso",
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-async function createForRent(
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<any> {
-    try {
-        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
-
-        const data = formatCarRequestData(req, photoCarUrl);
-
-        await carService.createCarForRent(data);
-        res.status(201).json({
-            message: "Carro para aluguel criado com sucesso",
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-// métodos put
-async function buy(req: Request, res: Response, next: NextFunction) {
-    try {
-        const { id } = req.params;
-
-        if (mongoose.Types.ObjectId.isValid(id) === false) {
-            throw { status: 400, message: "ID do carro inválido" };
-        }
-
-        const { buyerId } = req.body;
-
-        if (!mongoose.Types.ObjectId.isValid(buyerId)) {
-            throw { status: 400, message: "ID do comprador inválido" };
-        }
-
-        await carService.buyCar(id, buyerId);
-
-        res.status(200).json({ message: `Carro ${id} comprado com sucesso` });
-    } catch (error) {
-        next(error);
-    }
-}
-
-async function rent(req: Request, res: Response, next: NextFunction) {
-    try {
-        const { id } = req.params;
-
-        if (mongoose.Types.ObjectId.isValid(id) === false) {
-            throw { status: 400, message: "ID do carro inválido" };
-        }
-
-        const { renterId } = req.body;
-
-        if (!mongoose.Types.ObjectId.isValid(renterId)) {
-            throw { status: 400, message: "ID do locatário inválido" };
-        }
-
-        await carService.rentCar(id, renterId);
-
-        res.status(200).json({ message: `Carro ${id} alugado com sucesso` });
-    } catch (error) {
-        next(error);
-    }
-}
-
-async function returnCar(req: Request, res: Response, next: NextFunction) {
-    try {
-        const { id } = req.params;
-
-        if (mongoose.Types.ObjectId.isValid(id) === false) {
-            throw { status: 400, message: "ID do carro inválido" };
-        }
-
-        const { newMileage } = req.body;
-        await carService.returnRentedCar(id, newMileage);
-        res.status(200).json({ message: `Carro ${id} devolvido com sucesso` });
-    } catch (error) {
         next(error);
     }
 }
