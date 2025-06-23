@@ -108,3 +108,9 @@ src/
 ├── utils/         -- Supabase, helpers, etc.
 └── swagger/       -- Configuração do swagger
 ```
+
+---
+
+<h3 align="center">
+    Feito por Geovanne Meloni e Brendon Gomes
+</h3>
