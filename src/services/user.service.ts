@@ -2,6 +2,7 @@ import { User, UserType } from "../models/user/user.model";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/hashFunction";
 import { ILogin, ICreateUser, IUser } from "../interface/global";
+import { deleteFile } from "../utils/bucket";
 
 async function login(data: ILogin) {
     const user = await User.findOne({ email: data.email }).exec();
@@ -61,9 +62,23 @@ async function changeStatus(id: string) {
 
 async function remove(id: string) {
     try {
-        const user = await User.findByIdAndDelete(id);
+        const user = await User.findById(id);
 
         if (!user) throw { status: 404, message: "Usuário não encontrado" };
+
+        const userImagesUrl = [
+            { field: "document", url: user.user_profile?.document },
+            { field: "foto", url: user.user_profile?.foto },
+        ];
+
+        for (const image of userImagesUrl) {
+            if (image.url) {
+                console.log(`Deleting user ${image.field} image:`, image.url);
+                await deleteFile(image.url);
+            }
+        }
+
+        await User.deleteOne({ _id: id });
     } catch (error) {
         throw new Error(error.message);
     }
