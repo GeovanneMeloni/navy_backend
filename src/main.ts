@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import initRoutes from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
 import { setupSwagger } from "./swagger";
+import { apiRateLimiter } from "./security/apiRateLimiter";
 
 const app = e();
 mongoose
@@ -14,6 +15,8 @@ mongoose
 app.use(helmet());
 app.use(e.json());
 app.use(cors());
+
+app.use(apiRateLimiter);
 
 app.use("/api", initRoutes);
 
