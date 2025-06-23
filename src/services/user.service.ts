@@ -1,10 +1,15 @@
 import { User, UserType } from "../models/user/user.model";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../utils/hashFunction";
-import { ILogin, ICreateUser, IUser } from "../interface/global";
+import {
+    ILogin,
+    ICreateUser,
+    IUser,
+    ILoginResponse,
+} from "../interface/global";
 import { deleteFile } from "../utils/bucket";
 
-async function login(data: ILogin) {
+async function login(data: ILogin): Promise<ILoginResponse> {
     const user = await User.findOne({ email: data.email }).exec();
 
     if (!user) throw { status: 404, message: "Usuário não encontrado" };
@@ -22,7 +27,13 @@ async function login(data: ILogin) {
         { expiresIn: "3h" }
     );
 
-    return tokenJWT;
+    return {
+        tokenJWT,
+        user: {
+            id: user.id,
+            name: user?.user_profile?.name || user.email,
+        },
+    };
 }
 
 async function create(data: UserType) {

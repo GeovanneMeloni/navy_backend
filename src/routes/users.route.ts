@@ -12,7 +12,7 @@ const userRouter = Router();
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT
  *     tags:
- *     - Auth
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
@@ -22,14 +22,36 @@ const userRouter = Router();
  *             properties:
  *               email:
  *                 type: string
+ *                 example: admin@navy.com
  *               password:
  *                 type: string
+ *                 example: "123456"
  *             required:
  *               - email
  *               - password
  *     responses:
  *       200:
  *         description: Usuário autenticado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário autenticado com sucesso
+ *                 tokenJWT:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 510568911905901
+ *                     name:
+ *                       type: string
+ *                       example: admin@navy.com
  */
 userRouter.post("/login", userController.login);
 
@@ -115,7 +137,7 @@ userRouter.post(
  * @openapi
  * /api/users/client:
  *   post:
- *     summary: Cria um novo cliente com foto e documento (requer autenticação e permissão)
+ *     summary: Cria um novo cliente com foto e documento
  *     tags:
  *       - Users
  *     requestBody:
@@ -332,7 +354,7 @@ userRouter.delete(
  * @openapi
  * /api/users/{id}:
  *   get:
- *     summary: Obtém um usuário por ID
+ *     summary: Obtém um usuário por ID (requer autenticação)
  *     tags:
  *       - Users
  *     security:
@@ -347,6 +369,6 @@ userRouter.delete(
  *       200:
  *         description: Usuário encontrado
  */
-userRouter.get("/:id", userController.getById);
+userRouter.get("/:id", auth, userController.getById);
 
 export { userRouter };

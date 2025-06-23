@@ -63,4 +63,12 @@ interface ICreateCar {
     longitude?: number;
 }
 
-export { ICreateUser, ILogin, IUser, ICreateCar };
+interface ILoginResponse {
+    tokenJWT: string;
+    user: {
+        id: any;
+        name: string;
+    };
+}
+
+export { ICreateUser, ILogin, IUser, ICreateCar, ILoginResponse };

@@ -4,14 +4,21 @@ import { ICreateUser, IUser } from "../interface/global";
 import { UserType } from "../models/user/user.model";
 import { uploadFile } from "../utils/bucket";
 import mongoose from "mongoose";
-import { attachSignedUrlsToProfile, saveProfileFiles } from "../utils/user.utils";
+import {
+    attachSignedUrlsToProfile,
+    saveProfileFiles,
+} from "../utils/user.utils";
 
 async function login(req: Request, res: Response, next: NextFunction) {
     try {
         const data = await userService.login(req.body);
         res.status(200).json({
             message: "Usuário autenticado com sucesso",
-            tokenJWT: data,
+            tokenJWT: data.tokenJWT,
+            user: {
+                id: data.user.id,
+                name: data.user.name,
+            },
         });
     } catch (error) {
         next(error);
@@ -116,41 +123,39 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
 async function list(req: Request, res: Response, next: NextFunction) {
     const rawUsers = await userService.list();
 
-    const users = await Promise.all(
-        rawUsers.map(attachSignedUrlsToProfile)
-    );
+    const users = await Promise.all(rawUsers.map(attachSignedUrlsToProfile));
+    
     res.status(200).json(users);
 }
 
 async function update(req: Request, res: Response, next: NextFunction) {
-  try {
-    const { id } = req.params;
-    const body = req.body;
-    let uploadResult: any = {};
+    try {
+        const { id } = req.params;
+        const body = req.body;
+        let uploadResult: any = {};
 
-    if (req.files && (req.files["foto"] || req.files["document"])) {
-      // busca paths antigos para removê-los
-      const user = await userService.getById(String(id));
-      const old = user.user_profile;
+        if (req.files && (req.files["foto"] || req.files["document"])) {
+            // busca paths antigos para removê-los
+            const user = await userService.getById(String(id));
+            const old = user.user_profile;
 
-      uploadResult = await saveProfileFiles(
-        { foto: req.files["foto"], document: req.files["document"] },
-        { foto: old.foto, document: old.document }
-      );
+            uploadResult = await saveProfileFiles(
+                { foto: req.files["foto"], document: req.files["document"] },
+                { foto: old.foto, document: old.document }
+            );
 
-      body.user_profile = {
-        ...(body.user_profile ?? {}),
-        ...uploadResult,
-      };
+            body.user_profile = {
+                ...(body.user_profile ?? {}),
+                ...uploadResult,
+            };
+        }
+
+        await userService.update(String(id), body);
+        res.status(204).json({ message: `Usuário ${id} atualizado` });
+    } catch (error: any) {
+        next(error);
     }
-
-    await userService.update(String(id), body);
-    res.status(204).json({ message: `Usuário ${id} atualizado` });
-  } catch (error: any) {
-    next(error);
-  }
 }
-
 
 async function remove(req: Request, res: Response, next: NextFunction) {
     try {
@@ -185,7 +190,7 @@ async function getById(req: Request, res: Response, next: NextFunction) {
             return;
         }
 
-        const user = await attachSignedUrlsToProfile(rawUser)
+        const user = await attachSignedUrlsToProfile(rawUser);
 
         res.status(200).json(user);
     } catch (error) {
