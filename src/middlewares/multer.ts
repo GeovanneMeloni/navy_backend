@@ -3,7 +3,7 @@ import multer from "multer";
 const storage = multer.memoryStorage();
 export const upload = multer({
     storage,
-    limits: { fileSize: 1024 * 1024 * 5 },
+    limits: { fileSize: 1024 * 1024 * 5 }, // 5 MB
     fileFilter(req, file, callback) {
         const mimeType = file.mimetype.toLowerCase();
 

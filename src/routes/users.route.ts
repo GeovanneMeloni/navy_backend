@@ -1,7 +1,7 @@
 import { Router } from "express";
 import userController from "../controllers/user.controller";
 import { auth } from "../middlewares/auth";
-import { checkPermission } from "../middlewares/role";
+import { checkPermission } from "../middlewares/checkPermission";
 import { upload } from "../middlewares/multer";
 
 const userRouter = Router();
@@ -12,7 +12,7 @@ const userRouter = Router();
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT
  *     tags:
- *     - Users
+ *     - Auth
  *     requestBody:
  *       required: true
  *       content:
@@ -46,7 +46,7 @@ userRouter.post("/login", userController.login);
  *       200:
  *         description: Lista de usuários
  */
-userRouter.get("/", auth, checkPermission("view"), userController.list);
+userRouter.get("/", auth, checkPermission("view", "user"), userController.list);
 
 /**
  * @openapi
@@ -107,7 +107,7 @@ userRouter.get("/", auth, checkPermission("view"), userController.list);
 userRouter.post(
     "/employee",
     auth,
-    checkPermission("create"),
+    checkPermission("create", "user"),
     userController.createOperator
 );
 
@@ -115,7 +115,7 @@ userRouter.post(
  * @openapi
  * /api/users/client:
  *   post:
- *     summary: Cria um novo cliente com foto e documento
+ *     summary: Cria um novo cliente com foto e documento (requer autenticação e permissão)
  *     tags:
  *       - Users
  *     requestBody:
@@ -204,7 +204,7 @@ userRouter.post(
  * @openapi
  * /api/users/{id}:
  *   put:
- *     summary: Atualiza um usuário existente (perfil e arquivos)
+ *     summary: Atualiza um usuário existente (perfil e arquivos) (requer autenticação e permissão)
  *     tags:
  *       - Users
  *     security:
@@ -271,7 +271,7 @@ userRouter.post(
 userRouter.put(
     "/:id",
     auth,
-    checkPermission("edit"),
+    checkPermission("edit", "user"),
     upload.fields([{ name: "foto" }, { name: "document" }]),
     userController.update
 );
@@ -280,7 +280,7 @@ userRouter.put(
  * @openapi
  * /api/users/{id}:
  *   patch:
- *     summary: Altera o status de um usuário
+ *     summary: Altera o status de um usuário (requer autenticação e permissão)
  *     tags:
  *       - Users
  *     security:
@@ -298,7 +298,7 @@ userRouter.put(
 userRouter.patch(
     "/:id",
     auth,
-    checkPermission("edit"),
+    checkPermission("edit", "user"),
     userController.changeStatus
 );
 
@@ -306,7 +306,7 @@ userRouter.patch(
  * @openapi
  * /api/users/{id}:
  *   delete:
- *     summary: Remove um usuário
+ *     summary: Remove um usuário (requer autenticação e permissão)
  *     tags:
  *       - Users
  *     security:
@@ -324,7 +324,7 @@ userRouter.patch(
 userRouter.delete(
     "/:id",
     auth,
-    checkPermission("delete"),
+    checkPermission("delete", "user"),
     userController.remove
 );
 

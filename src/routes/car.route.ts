@@ -2,7 +2,9 @@ import { Router } from "express";
 import carController from "../controllers/car.controller";
 import { auth } from "../middlewares/auth";
 import { upload } from "../middlewares/multer";
-import { checkPermission } from "../middlewares/role";
+import { checkPermission } from "../middlewares/checkPermission";
+import { verifyCarOwner } from "../middlewares/car/verifyCarOwner";
+import { verifyCarRenter } from "../middlewares/car/verifyCarRenter";
 
 const carRouter = Router();
 
@@ -11,7 +13,7 @@ const carRouter = Router();
  * @openapi
  * /api/cars:
  *   post:
- *     summary: Cria um novo carro
+ *     summary: Cria um novo carro (requer autenticação )
  *     description: Cria um novo carro com as informações fornecidas. O campo photo é opcional e deve ser enviado como um arquivo, o campo operationType indica se é aluguel ou para venda.
  *     tags:
  *       - Car
@@ -74,13 +76,19 @@ const carRouter = Router();
  *       201:
  *         description: Carro criado com sucesso
  */
-carRouter.post("/", upload.fields([{ name: "photo" }]), carController.create);
+carRouter.post(
+    "/",
+    auth,
+    checkPermission("create", "car"),
+    upload.fields([{ name: "photo" }]),
+    carController.create
+);
 
 /**
  * @openapi
  * /api/cars/sale:
  *   post:
- *     summary: Cria um novo carro para venda
+ *     summary: Cria um novo carro para venda (requer autenticação)
  *     description: Cria um novo carro com as informações fornecidas. O campo operationType não é necessário, pois este endpoint é específico para venda (vai ser sale).
  *     tags:
  *       - Car
@@ -142,6 +150,8 @@ carRouter.post("/", upload.fields([{ name: "photo" }]), carController.create);
  */
 carRouter.post(
     "/sale",
+    auth,
+    checkPermission("create", "car"),
     upload.fields([{ name: "photo" }]),
     carController.createForSale
 );
@@ -150,7 +160,7 @@ carRouter.post(
  * @openapi
  * /api/cars/rent:
  *   post:
- *     summary: Cria um novo carro para aluguel/locação
+ *     summary: Cria um novo carro para aluguel/locação (requer autenticação)
  *     description: Cria um novo carro com as informações fornecidas. O campo operationType não é necessário, pois este endpoint é específico para alugar (vai ser rent).
  *     tags:
  *       - Car
@@ -212,6 +222,8 @@ carRouter.post(
  */
 carRouter.post(
     "/rent",
+    auth,
+    checkPermission("create", "car"),
     upload.fields([{ name: "photo" }]),
     carController.createForRent
 );
@@ -220,7 +232,7 @@ carRouter.post(
  * @openapi
  * /api/cars:
  *   put:
- *     summary: Atualiza um carro existente
+ *     summary: Atualiza um carro existente (requer autenticação e permissão)
  *     tags:
  *       - Car
  *     consumes:
@@ -279,13 +291,20 @@ carRouter.post(
  *       201:
  *         description: Carro criado com sucesso
  */
-carRouter.put("/:id", upload.fields([{ name: "photo" }]), carController.update);
+carRouter.put(
+    "/:id",
+    auth,
+    checkPermission("edit", "car"),
+    verifyCarOwner,
+    upload.fields([{ name: "photo" }]),
+    carController.update
+);
 
 /**
  * @openapi
  * /api/cars/buy/{id}:
  *   patch:
- *     summary: Realiza a compra de um carro
+ *     summary: Realiza a compra de um carro (requer autenticação e permissão)
  *     tags:
  *       - Car
  *     parameters:
@@ -293,7 +312,12 @@ carRouter.put("/:id", upload.fields([{ name: "photo" }]), carController.update);
  *         name: id
  *         required: true
  */
-carRouter.patch("/buy/:id", carController.buy);
+carRouter.patch(
+    "/buy/:id",
+    auth,
+    checkPermission("edit", "car"),
+    carController.buy
+);
 
 /**
  * @openapi
@@ -307,13 +331,18 @@ carRouter.patch("/buy/:id", carController.buy);
  *         name: id
  *         required: true
  */
-carRouter.patch("/rent/:id", carController.rent);
+carRouter.patch(
+    "/rent/:id",
+    auth,
+    checkPermission("edit", "car"),
+    carController.rent
+);
 
 /**
  * @openapi
  * /api/cars/return/{id}:
  *   patch:
- *     summary: Realiza a devolução de um carro alugado
+ *     summary: Realiza a devolução de um carro alugado (requer autenticação e permissão)
  *     tags:
  *       - Car
  *     parameters:
@@ -321,7 +350,13 @@ carRouter.patch("/rent/:id", carController.rent);
  *         name: id
  *         required: true
  */
-carRouter.patch("/return/:id", carController.returnCar);
+carRouter.patch(
+    "/return/:id",
+    auth,
+    checkPermission("edit", "car"),
+    verifyCarRenter,
+    carController.returnCar
+);
 
 /**
  * @openapi
@@ -466,7 +501,7 @@ carRouter.get("/:id", carController.getById);
  * @openapi
  * /api/cars/{id}:
  *   delete:
- *     summary: Remove um carro
+ *     summary: Remove um carro (requer autenticação e permissão)
  *     tags:
  *       - Car
  *     parameters:
@@ -477,6 +512,12 @@ carRouter.get("/:id", carController.getById);
  *       204:
  *        description: Carro removido com sucesso
  */
-carRouter.delete("/:id", carController.remove);
+carRouter.delete(
+    "/:id",
+    auth,
+    checkPermission("delete", "car"),
+    verifyCarOwner,
+    carController.remove
+);
 
 export { carRouter };

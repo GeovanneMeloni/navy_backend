@@ -2,6 +2,7 @@ import { error } from "console";
 import { Car, CarType } from "../models/car/car.model";
 import { User } from "../models/user/user.model";
 import { generateShortDescription } from "../utils/car.utils";
+import { deleteFile } from "../utils/bucket";
 
 async function create(data: CarType) {
     // Verifica se o carro é para venda ou aluguel
@@ -175,13 +176,37 @@ async function updateCar(id: string, data: Partial<CarType>) {
 
 async function remove(id: string) {
     try {
-        await Car.findByIdAndDelete(id);
+        const car = await Car.findById(id);
+
+        if (!car) {
+            throw { status: 404, message: "Carro não encontrado" };
+        }
+
+        if (car.photo_url) {
+            console.log(`Deletando imagem do carro: ${car.photo_url}`);
+            await deleteFile(car.photo_url);
+        }
+
+        await Car.deleteOne({ _id: id });
     } catch (error: any) {
         throw {
             status: 500,
             message: `Erro ao remover carro: ${error.message}`,
         };
     }
+}
+
+async function checkCarOwnership(
+    carId: string,
+    userId: string
+): Promise<boolean> {
+    const car = await Car.findById(carId, "owner_id").exec();
+
+    if (!car) {
+        throw { status: 404, message: "Carro não encontrado" };
+    }
+
+    return car.owner_id.toString() === userId;
 }
 
 export default {
@@ -202,4 +227,5 @@ export default {
     getAllAvailableForRentByOwner,
     create,
     remove,
+    checkCarOwnership,
 };

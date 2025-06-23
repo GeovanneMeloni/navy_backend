@@ -1,12 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabaseClient } from "../lib/supabase";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_KEY!;
 
 export const uploadFile = async (file: File, path: string): Promise<string> => {
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseClient.storage
         .from("navy-bucket")
         .upload(path, file, {
             upsert: true,
@@ -16,14 +14,26 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
     return data?.path;
 };
 
-export const getSignedUrl = async (path: string) => {
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
+export const deleteFile = async (path: string): Promise<void> => {
     const cleanPath = path.startsWith("navy-bucket/")
         ? path.replace("navy-bucket/", "")
         : path;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabaseClient.storage
+        .from("navy-bucket")
+        .remove([cleanPath]);
+
+    if (error) {
+        throw new Error(`Erro ao deletar arquivo do bucket: ${error.message}`);
+    }
+};
+
+export const getSignedUrl = async (path: string) => {
+    const cleanPath = path.startsWith("navy-bucket/")
+        ? path.replace("navy-bucket/", "")
+        : path;
+
+    const { data, error } = await supabaseClient.storage
         .from("navy-bucket")
         .createSignedUrl(cleanPath, 60 * 60);
 

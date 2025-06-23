@@ -24,6 +24,7 @@
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
     "@supabase/supabase-js": "^2.49.8",
+    "@types/swagger-jsdoc": "^6.0.4",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",

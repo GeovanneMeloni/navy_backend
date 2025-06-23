@@ -28,7 +28,7 @@ export function errorHandler(
         message = err.message;
     }
 
-    let errorDetails = err.errorDetails || "";
+    let errorDetails = err.errorDetails || undefined;
 
     res.status(status).json({ error: message, errorDetails });
 }
