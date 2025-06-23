@@ -137,7 +137,7 @@ userRouter.post(
  * @openapi
  * /api/users/client:
  *   post:
- *     summary: Cria um novo cliente com foto e documento
+ *     summary: Cria um novo cliente com foto e documento (cadastro de usuário normal)
  *     tags:
  *       - Users
  *     requestBody:
