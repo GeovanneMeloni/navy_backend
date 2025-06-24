@@ -17,6 +17,25 @@ async function create(data: CarType) {
         };
     }
 
+    const user = await User.findById(data.owner_id);
+
+    if (!user) {
+        throw {
+            status: 400,
+            message: "Usuário não encontrado para definir como proprietário",
+        };
+    }
+
+    const carWithSameLicensePlate = await Car.find({
+        license_plate: data.license_plate,
+    });
+
+    if (carWithSameLicensePlate) {
+        throw {
+            status: 400,
+            message: "Carro já criado com essa placa!",
+        };
+    }
     // Gera a short_description automaticamente
     data.short_description = generateShortDescription(data);
 
@@ -27,6 +46,26 @@ async function create(data: CarType) {
 
 async function createCarForSale(data: CarType) {
     data.short_description = generateShortDescription(data);
+
+    const user = await User.findById(data.owner_id);
+
+    if (!user) {
+        throw {
+            status: 400,
+            message: "Usuário não encontrado para definir como proprietário",
+        };
+    }
+
+    const carWithSameLicensePlate = await Car.find({
+        license_plate: data.license_plate,
+    });
+
+    if (carWithSameLicensePlate) {
+        throw {
+            status: 400,
+            message: "Carro já criado com essa placa!",
+        };
+    }
 
     data.operationType = "sale";
     if (!data.price) {
@@ -46,6 +85,26 @@ async function createCarForRent(data: CarType) {
     data.operationType = "rent";
 
     data.short_description = generateShortDescription(data);
+
+    const user = await User.findById(data.owner_id);
+
+    if (!user) {
+        throw {
+            status: 400,
+            message: "Usuário não encontrado para definir como proprietário",
+        };
+    }
+
+    const carWithSameLicensePlate = await Car.find({
+        license_plate: data.license_plate,
+    });
+
+    if (!carWithSameLicensePlate) {
+        throw {
+            status: 400,
+            message: "Carro já criado com essa placa!",
+        };
+    }
 
     if (!data.price_per_hour) {
         throw {

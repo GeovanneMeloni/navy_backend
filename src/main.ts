@@ -4,7 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import initRoutes from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
-import { setupSwagger } from "./swagger";
+import { setupSwagger } from "./docs/swagger";
 import { apiRateLimiter } from "./security/apiRateLimiter";
 
 const app = e();

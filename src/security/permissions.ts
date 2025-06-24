@@ -10,12 +10,12 @@ export const permissions: Record<Role, Record<Resource, Action[]>> = {
     },
     employee: {
         car: ["create", "edit", "delete", "view"],
-        user: ["view"],
+        user: ["view", "edit"],
         dashboard: [],
     },
     client: {
         car: ["create", "edit", "delete", "view"],
-        user: [],
+        user: ["view", "edit"],
         dashboard: [],
     },
 };

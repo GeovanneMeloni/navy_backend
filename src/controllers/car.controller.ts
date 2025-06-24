@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import carService from "../services/car.service";
-import { uploadFile } from "../utils/bucket";
+import { deleteFile, uploadFile } from "../utils/bucket";
 import { formatCarRequestData, GetCarWithSignedUrl } from "../utils/car.utils";
 import mongoose from "mongoose";
+import { getAddress } from "../utils/user.utils";
 
 // métodos post
 async function create(
@@ -15,9 +16,9 @@ async function create(
 
         const data = formatCarRequestData(req, photoCarUrl);
 
-        await carService.create(data);
+        const createdCar = await carService.create(data);
 
-        res.status(201).json({ message: "Carro criado com sucesso" });
+        res.status(200).json(createdCar);
     } catch (error) {
         console.log(error);
 
@@ -35,10 +36,9 @@ async function createForSale(
 
         const data = formatCarRequestData(req, photoCarUrl);
 
-        await carService.createCarForSale(data);
-        res.status(201).json({
-            message: "Carro para venda criado com sucesso",
-        });
+        const createdCar = await carService.createCarForSale(data);
+
+        res.status(200).json(createdCar);
     } catch (error) {
         next(error);
     }
@@ -54,10 +54,9 @@ async function createForRent(
 
         const data = formatCarRequestData(req, photoCarUrl);
 
-        await carService.createCarForRent(data);
-        res.status(201).json({
-            message: "Carro para aluguel criado com sucesso",
-        });
+        const createdCar = await carService.createCarForRent(data);
+
+        res.status(200).json(createdCar);
     } catch (error) {
         next(error);
     }
@@ -265,17 +264,35 @@ async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
 
-        const data = req.body;
-
-        const photoCarUrl: string = await GetAndUploadCarPhoto(req);
-
-        if (photoCarUrl) {
-            data.photo_url = photoCarUrl;
+        const existingCar = await carService.getById(id);
+        if (!existingCar) {
+            throw { status: 404, message: "Carro não encontrado" };
         }
 
-        await carService.updateCar(id, data);
+        // Upload da nova imagem (se fornecida)
+        let newPhotoUrl = existingCar.photo_url;
 
-        res.status(200).json({ message: `Carro ${id} atualizado com sucesso` });
+        if (req.files && req.files["photo"]) {
+            const newFile = req.files["photo"][0];
+
+            // Remove imagem anterior se existir
+            if (existingCar.photo_url) {
+                await deleteFile(existingCar.photo_url);
+            }
+
+            // Faz upload da nova
+            newPhotoUrl = await uploadFile(
+                newFile.buffer,
+                `fotos/${Date.now()}_${newFile.originalname}`
+            );
+        }
+
+        // Formata dados
+        const data = formatCarRequestData(req, newPhotoUrl);
+
+        const updatedCar = await carService.updateCar(id, data);
+
+        res.status(200).json(updatedCar);
     } catch (error) {
         next(error);
     }

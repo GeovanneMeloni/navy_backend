@@ -9,9 +9,25 @@ interface ICreateUser {
     rg: string;
     cpf: string;
     userType?: "individual" | "company" | "navy";
+    gender?: "masculino" | "feminino";
+    cnh?: string;
+
+    cep?: string;
+    rua?: string;
+    numero?: string;
+    logradouro?: string;
+    estado?: string;
+    municipio?: string;
+    complemento?: string;
+    tipoEndereco?: string;
+
+    latitude?: number;
+    longitude?: number;
 }
 
 interface ICreateEmployee extends ICreateUser {}
+
+interface IUpdateUser extends ICreateUser {}
 
 interface ILogin {
     email: string;
@@ -71,4 +87,4 @@ interface ILoginResponse {
     };
 }
 
-export { ICreateUser, ILogin, IUser, ICreateCar, ILoginResponse };
+export { ICreateUser, ILogin, IUser, ICreateCar, ILoginResponse, IUpdateUser };

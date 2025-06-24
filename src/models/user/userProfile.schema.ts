@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { InferSchemaType, Schema } from "mongoose";
 import { AddressSchema } from "./address.schema";
 
 // Subschema de informações pessoais
@@ -23,3 +23,6 @@ export const UserProfileSchema = new Schema(
         versionKey: false,
     }
 );
+
+// exportar o tipo
+export type UserProfileType = InferSchemaType<typeof UserProfileSchema>;

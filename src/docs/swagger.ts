@@ -8,7 +8,7 @@ const options: swaggerJSDoc.Options = {
         openapi: "3.0.0",
         info: {
             title: "Navy Backend API",
-            version: "1.0.5",
+            version: "1.1.0",
             description: "API para venda e aluguel de carros",
         },
         components: {
@@ -27,14 +27,19 @@ const options: swaggerJSDoc.Options = {
         ],
         servers: [
             {
-                url: "http://localhost:3000", // Altere para sua URL real
+                url: "https://navy-backend.onrender.com/", // Altere para sua URL real
             },
             {
-                url: "https://navy-backend.onrender.com/", // Altere para sua URL real
+                url: "http://localhost:3000", // Altere para sua URL real
             },
         ],
     },
-    apis: ["./src/routes/*.ts", "./src/controllers/*.ts", "./src/models/*.ts"],
+    apis: [
+        "./src/routes/*.ts",
+        "./src/controllers/*.ts",
+        "./src/models/*.ts",
+        "./src/docs/schemas.yaml",
+    ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

@@ -1,13 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
-import { ICreateUser, IUser } from "../interface/global";
+import { ICreateUser, IUpdateUser, IUser } from "../interface/global";
 import { UserType } from "../models/user/user.model";
 import { uploadFile } from "../utils/bucket";
 import mongoose from "mongoose";
 import {
     attachSignedUrlsToProfile,
+    getAddress,
+    getUserProfile,
     saveProfileFiles,
 } from "../utils/user.utils";
+import { Address } from "cluster";
+import { AddressType } from "../models/user/address.schema";
 
 async function login(req: Request, res: Response, next: NextFunction) {
     try {
@@ -27,31 +31,44 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
 async function createOperator(req: Request, res: Response, next: NextFunction) {
     try {
-        const { name, cpf, phone, rg, role, userType, ...rest }: ICreateUser =
-            req.body;
+        const requestBody = req.body as ICreateUser;
+
+        const { role, userType, ...rest }: ICreateUser = requestBody;
+
         if (!role || !["admin", "employee"].includes(role)) {
             res.status(400).json({ message: "Role inválido para operador" });
             return;
         }
+
         const finalUserType = userType || "company";
+
         if (!["company", "navy"].includes(finalUserType)) {
             res.status(400).json({
                 message: "userType inválido para operador",
             });
             return;
         }
-        const data: ICreateUser & { active: boolean } = {
+
+        const address = getAddress(requestBody);
+        const userProfile = getUserProfile(requestBody);
+
+        if (address) {
+            userProfile.address = address;
+        }
+
+        const data: UserType = {
             ...rest,
-            role,
+            role: "client",
             userType: finalUserType,
-            name,
-            cpf,
-            phone,
-            rg,
+            user_profile: userProfile,
             active: true,
         };
-        await userService.create(data);
-        res.status(201).json({ message: "Usuário criado com sucesso" });
+
+        const createdUser = await userService.create(data);
+        //res.status(201).json({ message: "Usuário criado com sucesso" });
+
+        res.status(200).json(createdUser);
+
         return;
     } catch (error: any) {
         if (error.code === 11000) {
@@ -65,8 +82,8 @@ async function createOperator(req: Request, res: Response, next: NextFunction) {
 
 async function createClient(req: Request, res: Response, next: NextFunction) {
     try {
-        const { name, cpf, phone, rg, ...rest }: ICreateUser = req.body;
-
+        const requestBody = req.body as ICreateUser;
+        const { name, cpf, phone, rg, cep, ...rest }: ICreateUser = requestBody;
         if (
             !req.files ||
             !req.files["foto"] ||
@@ -93,14 +110,19 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
             ),
         ]);
 
-        const userProfile = {
-            name,
-            cpf,
-            phone,
-            rg,
-            foto: fotoUrl,
-            document: documentUrl,
-        };
+        const address = getAddress(requestBody);
+
+        const userProfile = getUserProfile(requestBody);
+
+        if (fotoUrl) {
+            userProfile.foto = fotoUrl;
+        }
+        if (documentUrl) {
+            userProfile.document = documentUrl;
+        }
+        if (address) {
+            userProfile.address = address;
+        }
 
         const data: UserType = {
             ...rest,
@@ -109,8 +131,11 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
             user_profile: userProfile,
             active: true,
         };
-        await userService.create(data);
-        res.status(201).json({ message: "Usuário criado com sucesso" });
+
+        const createdUser = await userService.create(data);
+        //res.status(201).json({ message: "Usuário criado com sucesso" });
+
+        res.status(200).json(createdUser);
     } catch (error: any) {
         if (error.code === 11000) {
             next({ status: 409, message: "E-mail já cadastrado" });
@@ -124,34 +149,48 @@ async function list(req: Request, res: Response, next: NextFunction) {
     const rawUsers = await userService.list();
 
     const users = await Promise.all(rawUsers.map(attachSignedUrlsToProfile));
-    
+
     res.status(200).json(users);
 }
 
 async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const body = req.body;
-        let uploadResult: any = {};
+
+        const body = req.body as IUpdateUser;
+
+        let userProfile = getUserProfile(body);
+
+        const address = getAddress(body);
+
+        if (address) {
+            userProfile.address = address;
+        }
+
+        const user = await userService.getById(String(id));
 
         if (req.files && (req.files["foto"] || req.files["document"])) {
-            // busca paths antigos para removê-los
-            const user = await userService.getById(String(id));
             const old = user.user_profile;
+            // busca paths antigos para removê-los
 
-            uploadResult = await saveProfileFiles(
+            const uploadResult = await saveProfileFiles(
                 { foto: req.files["foto"], document: req.files["document"] },
                 { foto: old.foto, document: old.document }
             );
 
-            body.user_profile = {
-                ...(body.user_profile ?? {}),
-                ...uploadResult,
-            };
+            userProfile.foto = uploadResult.foto;
+            userProfile.document = uploadResult.document;
         }
 
-        await userService.update(String(id), body);
-        res.status(204).json({ message: `Usuário ${id} atualizado` });
+        const updateData: Partial<UserType> = {
+            user_profile: userProfile,
+        };
+
+        await userService.update(String(id), updateData);
+
+        const updatedUser = await userService.getById(String(id));
+
+        res.status(204).json(updatedUser);
     } catch (error: any) {
         next(error);
     }

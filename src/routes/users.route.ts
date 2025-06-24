@@ -1,7 +1,10 @@
 import { Router } from "express";
 import userController from "../controllers/user.controller";
 import { auth } from "../middlewares/auth";
-import { checkPermission } from "../middlewares/checkPermission";
+import {
+    checkOwnResource,
+    checkPermission,
+} from "../middlewares/checkPermission";
 import { upload } from "../middlewares/multer";
 
 const userRouter = Router();
@@ -18,40 +21,15 @@ const userRouter = Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: admin@navy.com
- *               password:
- *                 type: string
- *                 example: "123456"
- *             required:
- *               - email
- *               - password
+ *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       200:
  *         description: Usuário autenticado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Usuário autenticado com sucesso
- *                 tokenJWT:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 510568911905901
- *                     name:
- *                       type: string
- *                       example: admin@navy.com
+ *               $ref: '#/components/schemas/LoginResponse'
+ *
  */
 userRouter.post("/login", userController.login);
 
@@ -67,6 +45,10 @@ userRouter.post("/login", userController.login);
  *     responses:
  *       200:
  *         description: Lista de usuários
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserListResponse'
  */
 userRouter.get("/", auth, checkPermission("view", "user"), userController.list);
 
@@ -84,51 +66,18 @@ userRouter.get("/", auth, checkPermission("view", "user"), userController.list);
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               name:
- *                 type: string
- *               phone:
- *                 type: string
- *               rg:
- *                 type: string
- *               cpf:
- *                 type: string
- *               role:
- *                 type: string
- *                 enum:
- *                   - admin
- *                   - employee
- *               userType:
- *                 type: string
- *                 enum:
- *                   - company
- *                   - navy
- *               foto:
- *                 type: string
- *                 format: binary
- *               document:
- *                 type: string
- *                 format: binary
- *             required:
- *               - email
- *               - password
- *               - name
- *               - phone
- *               - rg
- *               - cpf
- *               - role
+ *             $ref: '#/components/schemas/UserEmployeeRequest'
  *     responses:
- *       201:
- *         description: Operador criado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
  */
 userRouter.post(
     "/employee",
     auth,
+    upload.none(),
     checkPermission("create", "user"),
     userController.createOperator
 );
@@ -145,76 +94,13 @@ userRouter.post(
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               name:
- *                 type: string
- *               phone:
- *                 type: string
- *               rg:
- *                 type: string
- *               cpf:
- *                 type: string
- *               gender:
- *                 type: string
- *                 enum:
- *                   - masculino
- *                   - feminino
- *                   - outro
- *               address:
- *                 type: object
- *                 properties:
- *                   cep:
- *                     type: string
- *                   rua:
- *                     type: string
- *                   numero:
- *                     type: string
- *                   logradouro:
- *                     type: string
- *                   estado:
- *                     type: string
- *                   municipio:
- *                     type: string
- *                   location:
- *                     type: object
- *                     properties:
- *                       latitude:
- *                         type: number
- *                       longitude:
- *                         type: number
- *                 required:
- *                   - cep
- *                   - rua
- *                   - numero
- *                   - logradouro
- *                   - estado
- *                   - municipio
- *                   - location
- *               foto:
- *                 type: string
- *                 format: binary
- *               document:
- *                 type: string
- *                 format: binary
- *             required:
- *               - email
- *               - password
- *               - name
- *               - phone
- *               - rg
- *               - cpf
- *               - gender
- *               - address
- *               - foto
- *               - document
+ *             $ref: '#/components/schemas/UserClientRequest'
  *     responses:
- *       201:
- *         description: Cliente criado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
  */
 userRouter.post(
     "/client",
@@ -242,58 +128,19 @@ userRouter.post(
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               name:
- *                 type: string
- *               phone:
- *                 type: string
- *               gender:
- *                 type: string
- *                 enum:
- *                   - masculino
- *                   - feminino
- *                   - outro
- *               address:
- *                 type: object
- *                 properties:
- *                   cep:
- *                     type: string
- *                   rua:
- *                     type: string
- *                   numero:
- *                     type: string
- *                   logradouro:
- *                     type: string
- *                   estado:
- *                     type: string
- *                   municipio:
- *                     type: string
- *                   location:
- *                     type: object
- *                     properties:
- *                       latitude:
- *                         type: number
- *                       longitude:
- *                         type: number
- *               foto:
- *                 type: string
- *                 format: binary
- *               document:
- *                 type: string
- *                 format: binary
- *             # Nenhum campo é estritamente obrigatório aqui:
- *             # envie apenas os que quiser atualizar
+ *             $ref: '#/components/schemas/UserUpdateInput'
  *     responses:
- *       204:
- *         description: Usuário atualizado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
  */
 userRouter.put(
     "/:id",
     auth,
     checkPermission("edit", "user"),
+    checkOwnResource,
     upload.fields([{ name: "foto" }, { name: "document" }]),
     userController.update
 );
@@ -367,7 +214,10 @@ userRouter.delete(
  *           type: string
  *     responses:
  *       200:
- *         description: Usuário encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
  */
 userRouter.get("/:id", auth, userController.getById);
 

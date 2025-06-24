@@ -40,7 +40,12 @@ async function create(data: UserType) {
     data.password = await hashPassword(data.password);
 
     const user = new User(data);
-    return user.save();
+
+    const createdUser = await user.save();
+
+    const userWithoutId = await User.findById(createdUser._id, { password: 0 });
+
+    return userWithoutId;
 }
 
 async function list() {

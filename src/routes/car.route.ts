@@ -288,8 +288,12 @@ carRouter.post(
  *                 type: string
  *                 format: binary
  *     responses:
- *       201:
- *         description: Carro criado com sucesso
+ *       200:
+ *         description: Carro com as informações atualizadas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.put(
     "/:id",
@@ -367,7 +371,11 @@ carRouter.patch(
  *       - Car
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/", carController.list);
 
@@ -380,7 +388,11 @@ carRouter.get("/", carController.list);
  *       - Car
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros para venda
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/available/sale", carController.listAvailableForSale);
 
@@ -393,7 +405,11 @@ carRouter.get("/available/sale", carController.listAvailableForSale);
  *       - Car
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros para alugar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/available/rent", carController.listAvailableForRent);
 
@@ -406,7 +422,11 @@ carRouter.get("/available/rent", carController.listAvailableForRent);
  *       - Car
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros vendidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/sold", carController.listSold);
 
@@ -419,7 +439,11 @@ carRouter.get("/sold", carController.listSold);
  *       - Car
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros alugados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/rented", carController.listCurrentlyRented);
 
@@ -436,7 +460,11 @@ carRouter.get("/rented", carController.listCurrentlyRented);
  *         required: true
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros de um proprietário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get("/owner/:ownerId", carController.listByOwner);
 
@@ -453,7 +481,11 @@ carRouter.get("/owner/:ownerId", carController.listByOwner);
  *         required: true
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros de um proprietário para venda
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get(
     "/owner/:ownerId/available/sale",
@@ -473,7 +505,11 @@ carRouter.get(
  *         required: true
  *     responses:
  *       200:
- *        description: Lista de carros retornada com sucesso
+ *         description: Lista de carros de um proprietário para alugar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
  */
 carRouter.get(
     "/owner/:ownerId/available/rent",
@@ -493,7 +529,11 @@ carRouter.get(
  *         required: true
  *     responses:
  *       200:
- *        description: Carro encontrado com sucesso
+ *         description: Um carro
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.get("/:id", carController.getById);
 

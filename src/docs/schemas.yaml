@@ -1,0 +1,414 @@
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "admin@navy.com"
+        password:
+          type: string
+          example: "123456"
+      required:
+        - email
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Usuário autenticado com sucesso"
+        tokenJWT:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "1234567890abcdef"
+            name:
+              type: string
+              example: "John Doe"
+
+    Address:
+      type: object
+      properties:
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+      required:
+        - cep
+        - rua
+        - numero
+        - logradouro
+        - estado
+        - municipio
+        - location
+
+    UserProfile:
+      description: "Schema for user profile information"
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        rg:
+          type: string
+        cpf:
+          type: string
+        cnh:
+          type: string
+        foto:
+          type: string
+          example: "http://example.com/photo.jpg"
+        document:
+          type: string
+          example: "http://example.com/document.jpg"
+        gender:
+          type: string
+          enum: [masculino, feminino, outro]
+        address:
+          $ref: "#/components/schemas/Address"
+
+    UserEmployeeRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        rg:
+          type: string
+        cpf:
+          type: string
+        gender:
+          type: string
+          enum: [masculino, feminino, outro]
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        role:
+          type: string
+          enum: [admin, employee, client]
+        userType:
+          type: string
+          enum: ["individual", "company", "navy"]
+      required:
+        - email
+        - password
+        - role
+
+    UserClientRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        rg:
+          type: string
+        cpf:
+          type: string
+        gender:
+          type: string
+          enum: [masculino, feminino, outro]
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        cnh:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        foto:
+          type: string
+          format: binary
+        document:
+          type: string
+          format: binary
+      required:
+        - email
+        - password
+        - name
+        - phone
+        - rg
+        - cpf
+        - gender
+        - foto
+        - document
+
+    UserResponse:
+      type: object
+      properties:
+        "_id":
+          type: string
+          example: "1234567890abcdef"
+        email:
+          type: string
+        active:
+          type: boolean
+        role:
+          type: string
+          enum: [admin, employee, client]
+        userType:
+          type: string
+          enum: ["individual", "company", "navy"]
+        user_profile:
+          $ref: "#/components/schemas/UserProfile"
+
+    UserListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserResponse"
+
+    UserUpdateInput:
+      type: object
+      properties:
+        phone:
+          type: string
+        rg:
+          type: string
+        cpf:
+          type: string
+        gender:
+          type: string
+          enum: [masculino, feminino, outro]
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        foto:
+          type: string
+          format: binary
+        document:
+          type: string
+          format: binary
+      # Nenhum campo é obrigatório para update
+
+    CarInput:
+      type: object
+      properties:
+        license_plate:
+          type: string
+        model:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        color:
+          type: string
+        group:
+          type: string
+        fuel_type:
+          type: string
+        transmission:
+          type: string
+        mileage:
+          type: number
+        operationType:
+          type: string
+          enum: [sale, rent]
+        price:
+          type: number
+        price_per_hour:
+          type: number
+        owner_id:
+          type: string
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        photo:
+          type: string
+          format: binary
+      required:
+        - license_plate
+        - model
+        - brand
+        - year
+        - color
+        - owner_id
+
+    CarUpdateInput:
+      type: object
+      properties:
+        license_plate:
+          type: string
+        model:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        color:
+          type: string
+        group:
+          type: string
+        fuel_type:
+          type: string
+        transmission:
+          type: string
+        mileage:
+          type: number
+        price:
+          type: number
+        price_per_hour:
+          type: number
+        owner_id:
+          type: string
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        photo:
+          type: string
+          format: binary
+      # Nenhum campo é obrigatório para update
+
+    CarResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "685600c02a357ad2c0adf4a1"
+        operationType:
+          type: string
+          enum: [rent, sale]
+        price_per_hour:
+          type: number
+          example: 95
+        license_plate:
+          type: string
+          example: "DEXKYJG"
+        status:
+          type: string
+          enum: [available, rented, sold]
+        rented_at:
+          type: string
+          format: date-time
+          nullable: true
+        sold_at:
+          type: string
+          format: date-time
+          nullable: true
+        short_description:
+          type: string
+          example: "PORSCHE 1 34.805 km 2015 SEMI-AUTOMÁTICO"
+        mileage:
+          type: number
+          example: 34805
+        address:
+          $ref: "#/components/schemas/Address"
+        owner_id:
+          type: string
+          example: "685600c02a357ad2c0adf49d"
+        model:
+          type: string
+          example: "1"
+        brand:
+          type: string
+          example: "Porsche"
+        year:
+          type: integer
+          example: 2015
+        color:
+          type: string
+          example: "escarlate"
+        fuel_type:
+          type: string
+          example: "diesel"
+        transmission:
+          type: string
+          example: "semi-automático"
+
+    CarListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/CarResponse"
