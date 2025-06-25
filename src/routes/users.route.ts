@@ -54,6 +54,39 @@ userRouter.get("/", auth, checkPermission("view", "user"), userController.list);
 
 /**
  * @openapi
+ * /api/users/filter:
+ *   get:
+ *     summary: Lista usuários com filtros personalizados (requer autenticação e permissão)
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: queryString
+ *         description: Digite o nome do campo e seu valor, para campos aninhandos utilize o ponto (.), por exemplo user_profile.address.estado ou user_profile.name
+ *         schema:
+ *           type: object
+ *           additionalProperties:
+ *             type: string
+ *
+ *     responses:
+ *       200:
+ *         description: Lista de usuários filtrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserListResponse'
+ */
+userRouter.get(
+    "/filter",
+    auth,
+    checkPermission("view", "user"),
+    userController.filterUsers
+);
+
+/**
+ * @openapi
  * /api/users/employee:
  *   post:
  *     summary: Cria um novo operador

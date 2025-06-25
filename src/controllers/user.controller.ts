@@ -10,8 +10,6 @@ import {
     getUserProfile,
     saveProfileFiles,
 } from "../utils/user.utils";
-import { Address } from "cluster";
-import { AddressType } from "../models/user/address.schema";
 
 async function login(req: Request, res: Response, next: NextFunction) {
     try {
@@ -159,6 +157,63 @@ async function list(req: Request, res: Response, next: NextFunction) {
     res.status(200).json(users);
 }
 
+async function filterUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+        const queryParams = req.query;
+        console.log(queryParams);
+        const filters: any = {};
+
+        for (const key in queryParams) {
+            if (!queryParams[key]) continue;
+
+            const value = queryParams[key] as string;
+
+            // Suporte a booleano
+            if (value === "true" || value === "false") {
+                filters[key] = value === "true";
+            }
+            // Campos que fazem busca aproximada (regex case-insensitive)
+            else if (
+                [
+                    "email",
+                    "user_profile.name",
+                    "user_profile.phone",
+                    "user_profile.cpf",
+                    "user_profile.rg",
+                    "user_profile.cnh",
+                    "user_profile.address.rua",
+                    "user_profile.address.logradouro",
+                    "user_profile.address.estado",
+                    "user_profile.address.municipio",
+                    "user_profile.address.cep",
+                ].includes(key)
+            ) {
+                filters[key] = { $regex: new RegExp(value, "i") };
+            }
+            // Campos numéricos e geográficos (latitude/longitude)
+            else if (
+                [
+                    "user_profile.address.location.latitude",
+                    "user_profile.address.location.longitude",
+                ].includes(key)
+            ) {
+                filters[key] = Number(value);
+            }
+            // Padrão
+            else {
+                filters[key] = value;
+            }
+        }
+        console.log(filters);
+
+        const users = await userService.listWithFilter(filters);
+
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
@@ -274,4 +329,5 @@ export default {
     changeStatus,
     remove,
     getById,
+    filterUsers,
 };

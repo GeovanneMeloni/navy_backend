@@ -52,6 +52,10 @@ async function list() {
     return User.find({}, { password: 0 }).exec();
 }
 
+async function listWithFilter(filters: any) {
+    return User.find(filters, { password: 0 }).exec();
+}
+
 async function getById(id: string) {
     return await User.findById(id, { password: 0 });
 }
@@ -108,4 +112,5 @@ export default {
     changeStatus,
     remove,
     getById,
+    listWithFilter,
 };
