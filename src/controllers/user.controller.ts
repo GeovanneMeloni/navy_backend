@@ -206,7 +206,11 @@ async function filterUsers(req: Request, res: Response, next: NextFunction) {
         }
         console.log(filters);
 
-        const users = await userService.listWithFilter(filters);
+        const rawUsers = await userService.listWithFilter(filters);
+
+        const users = await Promise.all(
+            rawUsers.map(attachSignedUrlsToProfile)
+        );
 
         res.status(200).json(users);
     } catch (error) {
