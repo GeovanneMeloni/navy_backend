@@ -5,9 +5,6 @@ import { AddressType } from "../models/user/address.schema";
 import { ICreateUser } from "../interface/global";
 import { UserProfileType } from "../models/user/userProfile.schema";
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_KEY!;
-
 export async function attachSignedUrlsToProfile<
     T extends {
         user_profile?: {
@@ -28,14 +25,16 @@ export async function attachSignedUrlsToProfile<
         document ? getSignedUrl(document) : null,
     ]);
 
-    return {
-        ...user,
-        user_profile: {
-            ...user.user_profile,
-            ...(signedFoto ? { foto: signedFoto } : {}),
-            ...(signedDoc ? { document: signedDoc } : {}),
-        },
-    };
+    if (signedDoc) {
+        user.user_profile.document = signedDoc;
+    }
+
+    if (signedFoto) {
+        user.user_profile.foto = signedFoto;
+    }
+
+    // corigido bug, pois fazer o ...user, traz propriedades do banco que não é legal
+    return user;
 }
 
 export async function saveProfileFiles(

@@ -84,42 +84,48 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
     try {
         const requestBody = req.body as ICreateUser;
         const { name, cpf, phone, rg, cep, ...rest }: ICreateUser = requestBody;
-        if (
-            !req.files ||
-            !req.files["foto"] ||
-            !req.files["foto"][0] ||
-            !req.files["document"] ||
-            !req.files["document"][0]
-        ) {
-            res.status(400).json({
-                message: "Foto e documento são obrigatórios",
-            });
-            return;
-        }
-
-        const [fotoUrl, documentUrl] = await Promise.all([
-            uploadFile(
-                req.files["foto"][0].buffer,
-                `fotos/${Date.now()}_${req.files["foto"][0].originalname}`
-            ),
-            uploadFile(
-                req.files["document"][0].buffer,
-                `documentos/${Date.now()}_${
-                    req.files["document"][0].originalname
-                }`
-            ),
-        ]);
 
         const address = getAddress(requestBody);
 
         const userProfile = getUserProfile(requestBody);
 
-        if (fotoUrl) {
-            userProfile.foto = fotoUrl;
+        const contentType = req.headers["content-type"] || "";
+        console.log(contentType);
+
+        if (contentType.startsWith("multipart/form-data")) {
+            if (
+                !req.files ||
+                !req.files["foto"] ||
+                !req.files["foto"][0] ||
+                !req.files["document"] ||
+                !req.files["document"][0]
+            ) {
+                res.status(400).json({
+                    message: "Foto e documento são obrigatórios",
+                });
+                return;
+            }
+
+            const [fotoUrl, documentUrl] = await Promise.all([
+                uploadFile(
+                    req.files["foto"][0].buffer,
+                    `fotos/${Date.now()}_${req.files["foto"][0].originalname}`
+                ),
+                uploadFile(
+                    req.files["document"][0].buffer,
+                    `documentos/${Date.now()}_${
+                        req.files["document"][0].originalname
+                    }`
+                ),
+            ]);
+            if (fotoUrl) {
+                userProfile.foto = fotoUrl;
+            }
+            if (documentUrl) {
+                userProfile.document = documentUrl;
+            }
         }
-        if (documentUrl) {
-            userProfile.document = documentUrl;
-        }
+
         if (address) {
             userProfile.address = address;
         }
@@ -160,7 +166,6 @@ async function update(req: Request, res: Response, next: NextFunction) {
         const body = req.body as IUpdateUser;
 
         let userProfile = getUserProfile(body);
-
         const address = getAddress(body);
 
         if (address) {
@@ -169,17 +174,30 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
         const user = await userService.getById(String(id));
 
-        if (req.files && (req.files["foto"] || req.files["document"])) {
-            const old = user.user_profile;
-            // busca paths antigos para removê-los
+        if (!user) {
+            res.status(404).json({ message: "Usuário não encontrado." });
+            return;
+        }
 
-            const uploadResult = await saveProfileFiles(
-                { foto: req.files["foto"], document: req.files["document"] },
-                { foto: old.foto, document: old.document }
-            );
+        const contentType = req.headers["content-type"] || "";
+        console.log(contentType);
 
-            userProfile.foto = uploadResult.foto;
-            userProfile.document = uploadResult.document;
+        if (contentType.startsWith("multipart/form-data")) {
+            if (req.files && (req.files["foto"] || req.files["document"])) {
+                const old = user.user_profile;
+                // busca paths antigos para removê-los
+
+                const uploadResult = await saveProfileFiles(
+                    {
+                        foto: req.files["foto"],
+                        document: req.files["document"],
+                    },
+                    { foto: old.foto, document: old.document }
+                );
+
+                userProfile.foto = uploadResult.foto;
+                userProfile.document = uploadResult.document;
+            }
         }
 
         const updateData: Partial<UserType> = {

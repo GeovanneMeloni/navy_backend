@@ -24,57 +24,16 @@ const carRouter = Router();
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               license_plate:
- *                 type: string
- *               model:
- *                 type: string
- *               brand:
- *                 type: string
- *               year:
- *                 type: integer
- *               color:
- *                 type: string
- *               group:
- *                 type: string
- *               fuel_type:
- *                 type: string
- *               transmission:
- *                 type: string
- *               mileage:
- *                 type: number
- *               operationType:
- *                 type: string
- *                 enum: [sale, rent]
- *               price:
- *                 type: number
- *               price_per_hour:
- *                 type: number
- *               owner_id:
- *                 type: string
- *               cep:
- *                 type: string
- *               rua:
- *                 type: string
- *               numero:
- *                 type: string
- *               logradouro:
- *                 type: string
- *               estado:
- *                 type: string
- *               municipio:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               photo:
- *                 type: string
- *                 format: binary
+ *             $ref: '#/components/schemas/CarInput'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CarInputJson'
  *     responses:
- *       201:
- *         description: Carro criado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.post(
     "/",
@@ -99,54 +58,16 @@ carRouter.post(
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               license_plate:
- *                 type: string
- *               model:
- *                 type: string
- *               brand:
- *                 type: string
- *               year:
- *                 type: integer
- *               color:
- *                 type: string
- *               group:
- *                 type: string
- *               fuel_type:
- *                 type: string
- *               transmission:
- *                 type: string
- *               mileage:
- *                 type: number
- *               price:
- *                 type: number
- *               price_per_hour:
- *                 type: number
- *               owner_id:
- *                 type: string
- *               cep:
- *                 type: string
- *               rua:
- *                 type: string
- *               numero:
- *                 type: string
- *               logradouro:
- *                 type: string
- *               estado:
- *                 type: string
- *               municipio:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               photo:
- *                 type: string
- *                 format: binary
+ *             $ref: '#/components/schemas/CarInput'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CarInputJson'
  *     responses:
- *       201:
- *         description: Carro criado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.post(
     "/sale",
@@ -171,54 +92,16 @@ carRouter.post(
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               license_plate:
- *                 type: string
- *               model:
- *                 type: string
- *               brand:
- *                 type: string
- *               year:
- *                 type: integer
- *               color:
- *                 type: string
- *               group:
- *                 type: string
- *               fuel_type:
- *                 type: string
- *               transmission:
- *                 type: string
- *               mileage:
- *                 type: number
- *               price:
- *                 type: number
- *               price_per_hour:
- *                 type: number
- *               owner_id:
- *                 type: string
- *               cep:
- *                 type: string
- *               rua:
- *                 type: string
- *               numero:
- *                 type: string
- *               logradouro:
- *                 type: string
- *               estado:
- *                 type: string
- *               municipio:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               photo:
- *                 type: string
- *                 format: binary
+ *             $ref: '#/components/schemas/CarInput'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CarInputJson'
  *     responses:
- *       201:
- *         description: Carro criado com sucesso
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.post(
     "/rent",
@@ -242,51 +125,10 @@ carRouter.post(
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               license_plate:
- *                 type: string
- *               model:
- *                 type: string
- *               brand:
- *                 type: string
- *               year:
- *                 type: integer
- *               color:
- *                 type: string
- *               group:
- *                 type: string
- *               fuel_type:
- *                 type: string
- *               transmission:
- *                 type: string
- *               mileage:
- *                 type: number
- *               price:
- *                 type: number
- *               price_per_hour:
- *                 type: number
- *               owner_id:
- *                 type: string
- *               cep:
- *                 type: string
- *               rua:
- *                 type: string
- *               numero:
- *                 type: string
- *               logradouro:
- *                 type: string
- *               estado:
- *                 type: string
- *               municipio:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               photo:
- *                 type: string
- *                 format: binary
+ *             $ref: '#/components/schemas/CarUpdateInput'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CarUpdateInputJson'
  *     responses:
  *       200:
  *         description: Carro com as informações atualizadas

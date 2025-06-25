@@ -311,6 +311,13 @@ async function remove(req: Request, res: Response, next: NextFunction) {
 }
 
 async function GetAndUploadCarPhoto(req: Request): Promise<string | undefined> {
+    const contentType = req.headers["content-type"] || "";
+    console.log(contentType);
+
+    if (!contentType.startsWith("multipart/form-data")) {
+        return undefined;
+    }
+
     const file = req.files["photo"]?.[0];
 
     if (!file) return undefined;

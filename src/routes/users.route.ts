@@ -67,6 +67,9 @@ userRouter.get("/", auth, checkPermission("view", "user"), userController.list);
  *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/UserEmployeeRequest'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserEmployeeRequestJson'
  *     responses:
  *       200:
  *         content:
@@ -95,6 +98,9 @@ userRouter.post(
  *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/UserClientRequest'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserClientRequestJson'
  *     responses:
  *       200:
  *         content:
@@ -129,6 +135,9 @@ userRouter.post(
  *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/UserUpdateInput'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdateInputJson'
  *     responses:
  *       200:
  *         content:

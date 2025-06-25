@@ -1,0 +1,58 @@
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        cep:
+          type: string
+        rua:
+          type: string
+        numero:
+          type: string
+        logradouro:
+          type: string
+        estado:
+          type: string
+        municipio:
+          type: string
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+      required:
+        - cep
+        - rua
+        - numero
+        - logradouro
+        - estado
+        - municipio
+        - location
+
+    UserProfile:
+      description: "Schema for user profile information"
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        rg:
+          type: string
+        cpf:
+          type: string
+        cnh:
+          type: string
+        foto:
+          type: string
+          example: "http://example.com/photo.jpg"
+        document:
+          type: string
+          example: "http://example.com/document.jpg"
+        gender:
+          type: string
+          enum: [masculino, feminino, outro]
+        address:
+          $ref: "#/components/schemas/Address"
