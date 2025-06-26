@@ -20,19 +20,14 @@ export async function attachSignedUrlsToProfile<
 
     const { foto, document } = user.user_profile;
 
-    if (!foto && !document) return user;
-
-    const [signedFoto, signedDoc] = await Promise.all([
-        foto ? getSignedUrl(foto) : null,
-        document ? getSignedUrl(document) : null,
-    ]);
-
-    if (signedDoc) {
-        user.user_profile.document = signedDoc;
+    if (foto) {
+        const signedFoto = foto ? await getSignedUrl(foto) : null;
+        user.user_profile.foto = signedFoto;
     }
 
-    if (signedFoto) {
-        user.user_profile.foto = signedFoto;
+    if (document) {
+        const signedDocument = document ? await getSignedUrl(document) : null;
+        user.user_profile.document = signedDocument;
     }
 
     // corigido bug, pois fazer o ...user, traz propriedades do banco que não é legal
@@ -46,12 +41,16 @@ export async function saveProfileFiles(
     const out: any = {};
     // remove arquivos antigos se vierem
     const toDelete: string[] = [];
+
     if (oldPaths?.foto) toDelete.push(oldPaths.foto);
+
     if (oldPaths?.document) toDelete.push(oldPaths.document);
+
     if (toDelete.length) {
         const { error: delErr } = await supabaseClient.storage
             .from("navy-bucket")
             .remove(toDelete);
+
         if (delErr) throw delErr;
     }
 
@@ -59,13 +58,16 @@ export async function saveProfileFiles(
 
     if (files.foto?.[0]) {
         const f = files.foto[0];
+
         const path = `fotos/${Date.now()}_${f.originalname}`;
+
         uploadTasks.push(
             supabaseClient.storage
                 .from("navy-bucket")
                 .upload(path, f.buffer, { upsert: true })
                 .then(({ data, error }) => {
                     if (error) throw error;
+
                     out.foto = data.path;
                 })
         );
@@ -79,11 +81,13 @@ export async function saveProfileFiles(
                 .upload(path, d.buffer, { upsert: true })
                 .then(({ data, error }) => {
                     if (error) throw error;
+
                     out.document = data.path;
                 })
         );
     }
     await Promise.all(uploadTasks);
+
     return out;
 }
 

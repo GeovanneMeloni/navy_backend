@@ -64,9 +64,11 @@ async function createOperator(req: Request, res: Response, next: NextFunction) {
         };
 
         const createdUser = await userService.create(data);
+
+        const userWithSignedUrls = await attachSignedUrlsToProfile(createdUser);
         //res.status(201).json({ message: "Usuário criado com sucesso" });
 
-        res.status(200).json(createdUser);
+        res.status(200).json(userWithSignedUrls);
 
         return;
     } catch (error: any) {
@@ -92,36 +94,34 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
         console.log(contentType);
 
         if (contentType.startsWith("multipart/form-data")) {
-            if (
-                !req.files ||
-                !req.files["foto"] ||
-                !req.files["foto"][0] ||
-                !req.files["document"] ||
-                !req.files["document"][0]
-            ) {
-                res.status(400).json({
-                    message: "Foto e documento são obrigatórios",
-                });
-                return;
+            let fotoUrl: string | undefined;
+            let documentUrl: string | undefined;
+
+            if (req.files && req.files["foto"] && req.files["foto"][0]) {
+                const fotoFile = req.files["foto"][0];
+
+                fotoUrl = await uploadFile(
+                    fotoFile.buffer,
+                    `fotos/${Date.now()}_${fotoFile.originalname}`
+                );
+                if (fotoUrl) {
+                    userProfile.foto = fotoUrl;
+                }
             }
 
-            const [fotoUrl, documentUrl] = await Promise.all([
-                uploadFile(
-                    req.files["foto"][0].buffer,
-                    `fotos/${Date.now()}_${req.files["foto"][0].originalname}`
-                ),
-                uploadFile(
-                    req.files["document"][0].buffer,
-                    `documentos/${Date.now()}_${
-                        req.files["document"][0].originalname
-                    }`
-                ),
-            ]);
-            if (fotoUrl) {
-                userProfile.foto = fotoUrl;
-            }
-            if (documentUrl) {
-                userProfile.document = documentUrl;
+            if (
+                req.files &&
+                req.files["document"] &&
+                req.files["document"][0]
+            ) {
+                const documentFile = req.files["document"][0];
+                documentUrl = await uploadFile(
+                    documentFile.buffer,
+                    `documentos/${Date.now()}_${documentFile.originalname}`
+                );
+                if (documentUrl) {
+                    userProfile.document = documentUrl;
+                }
             }
         }
 
@@ -140,7 +140,9 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
         const createdUser = await userService.create(data);
         //res.status(201).json({ message: "Usuário criado com sucesso" });
 
-        res.status(200).json(createdUser);
+        const userWithSignedUrls = await attachSignedUrlsToProfile(createdUser);
+
+        res.status(200).json(userWithSignedUrls);
     } catch (error: any) {
         if (error.code === 11000) {
             next({ status: 409, message: "E-mail já cadastrado" });
@@ -267,7 +269,9 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
         const updatedUser = await userService.getById(String(id));
 
-        res.status(204).json(updatedUser);
+        const userWithSignedUrls = await attachSignedUrlsToProfile(updatedUser);
+
+        res.status(200).json(userWithSignedUrls);
     } catch (error: any) {
         next(error);
     }

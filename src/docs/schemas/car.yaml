@@ -229,6 +229,10 @@ components:
           type: string
           format: date-time
           nullable: true
+        rented_by:
+          type: string
+        sold_to:
+          type: string
         short_description:
           type: string
           example: "PORSCHE 1 34.805 km 2015 SEMI-AUTOMÁTICO"

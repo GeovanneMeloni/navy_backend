@@ -26,8 +26,8 @@ async function seed() {
         faker.seed(seed); // Para gerar dados consistentes entre execuções
         console.log("Seed:", seed);
 
-        await User.deleteMany({});
-        await Car.deleteMany({});
+        //await User.deleteMany({});
+        //await Car.deleteMany({});
 
         const users: UserType[] = [];
         const usersIds: string[] = [];
@@ -40,12 +40,20 @@ async function seed() {
         adminUser.email = "admin@navy.com";
         adminUser.user_profile = undefined;
         adminUser.active = true;
+
+        // Remove admin se já existir
+        await User.deleteOne({ email: adminUser.email });
+
         const createdAdminUser = await User.create(adminUser);
 
         users.push(createdAdminUser);
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
             const userData = await createFakeUser();
+
+            // Remove usuário com o mesmo e-mail, se existir
+            await User.deleteOne({ email: userData.email });
+
             const createdUser = await User.create(userData);
 
             // O ID do usuário é convertido para string
@@ -57,6 +65,9 @@ async function seed() {
 
         for (let i = 0; i < 25; i++) {
             const carData = createFakeCar(usersIds);
+
+            await Car.deleteOne({ license_plate: carData.license_plate });
+
             await Car.create(carData);
             cars.push(carData);
         }
@@ -95,6 +106,23 @@ function createFakeAddress(): AddressType {
     return address;
 }
 
+function createSaoPauloFakeAddress(): AddressType {
+    const address: AddressType = {
+        cep: faker.helpers.fromRegExp("01[0-9]{3}-[0-9]{3}"), // CEPs da cidade de São Paulo (início 01000-000 a 05999-999)
+        rua: faker.location.street(),
+        numero: faker.location.buildingNumber(),
+        logradouro: faker.location.streetAddress(),
+        estado: "São Paulo",
+        municipio: "São Paulo",
+        location: {
+            latitude: -23.55052 + faker.number.float({ min: -0.01, max: 0.01 }),
+            longitude:
+                -46.633308 + faker.number.float({ min: -0.01, max: 0.01 }),
+        },
+    };
+    return address;
+}
+
 async function createFakeUser(): Promise<UserType> {
     const password = await bcrypt.hash("senha123", 10);
     const firstName = faker.person.firstName();
@@ -118,7 +146,7 @@ async function createFakeUser(): Promise<UserType> {
             rg: faker.string.numeric({ length: 9 }),
             cnh: isClient ? faker.string.numeric({ length: 9 }) : undefined,
             gender: faker.helpers.arrayElement(["masculino", "feminino"]),
-            address: createFakeAddress(),
+            address: createSaoPauloFakeAddress(),
             // `foto` e `document` são opcionais e omitidos aqui.
         },
     };
@@ -142,9 +170,10 @@ function createFakeCar(usersIds: string[]): CarType {
         "sale",
         "rent",
     ]);
-    const ownerId = new mongoose.Types.ObjectId(
-        faker.helpers.arrayElement(usersIds)
-    );
+
+    const ownerIdStr = faker.helpers.arrayElement(usersIds);
+    const ownerId = new mongoose.Types.ObjectId(ownerIdStr);
+    const filteredUserIds = usersIds.filter((id) => id !== ownerIdStr);
 
     const rented_at = faker.date.past({ years: 1 });
     const sold_at = faker.date.past({ years: 1 });
@@ -160,7 +189,7 @@ function createFakeCar(usersIds: string[]): CarType {
         if (status === "sold") {
             soldAt = sold_at;
             soldTo = new mongoose.Types.ObjectId(
-                faker.helpers.arrayElement(usersIds)
+                faker.helpers.arrayElement(filteredUserIds)
             );
         }
     } else {
@@ -168,7 +197,7 @@ function createFakeCar(usersIds: string[]): CarType {
         if (status === "rented") {
             rentedAt = rented_at;
             rentedBy = new mongoose.Types.ObjectId(
-                faker.helpers.arrayElement(usersIds)
+                faker.helpers.arrayElement(filteredUserIds)
             );
         }
     }
@@ -206,7 +235,7 @@ function createFakeCar(usersIds: string[]): CarType {
             "elétrico",
         ]),
         transmission,
-        address: createFakeAddress(),
+        address: createSaoPauloFakeAddress(),
         owner_id: ownerId,
     };
 
