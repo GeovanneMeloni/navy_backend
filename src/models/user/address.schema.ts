@@ -32,3 +32,4 @@ export const AddressSchema = new Schema(
 );
 
 export type AddressType = InferSchemaType<typeof AddressSchema>;
+export type LocationType = InferSchemaType<typeof LocationSchema>;

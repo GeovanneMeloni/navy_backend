@@ -191,6 +191,10 @@ components:
     UserUpdateInput:
       type: object
       properties:
+        name:
+          type: string
+        cnh:
+          type: string
         phone:
           type: string
         rg:
@@ -227,6 +231,10 @@ components:
     UserUpdateInputJson:
       type: object
       properties:
+        name:
+          type: string
+        cnh:
+          type: string
         phone:
           type: string
         rg:

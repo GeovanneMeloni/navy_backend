@@ -21,8 +21,6 @@ async function create(
 
         res.status(200).json(createdCar);
     } catch (error) {
-        console.log(error);
-
         next(error);
     }
 }
@@ -122,8 +120,6 @@ async function returnCar(req: Request, res: Response, next: NextFunction) {
         await carService.returnRentedCar(id, newMileage);
         res.status(200).json({ message: `Carro ${id} devolvido com sucesso` });
     } catch (error) {
-        console.log(error);
-
         next(error);
     }
 }

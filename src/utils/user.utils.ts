@@ -104,9 +104,10 @@ export function getAddress(data: ICreateUser): AddressType | undefined {
         latitude,
         longitude,
     } = data;
+
     if (!cep) return undefined;
 
-    const address: AddressType = {
+    const address: AddressType = removeUndefined({
         cep,
         rua,
         numero,
@@ -115,14 +116,8 @@ export function getAddress(data: ICreateUser): AddressType | undefined {
         municipio,
         complemento,
         tipoEndereco,
-    };
-
-    if (latitude && longitude) {
-        address.location = {
-            latitude,
-            longitude,
-        };
-    }
+        location: latitude && longitude ? { latitude, longitude } : undefined,
+    });
 
     return address;
 }
@@ -140,12 +135,18 @@ export function getUserIdFromRequest(req: Request): string {
 export function getUserProfile(data: ICreateUser): UserProfileType {
     const { name, cpf, phone, rg, gender, cnh } = data;
 
-    return {
+    return removeUndefined({
         name,
         cpf,
         phone,
         rg,
         gender,
         cnh,
-    };
+    });
+}
+
+export function removeUndefined<T>(obj: any): T {
+    return Object.fromEntries(
+        Object.entries(obj).filter(([_, v]) => v !== undefined)
+    ) as T;
 }

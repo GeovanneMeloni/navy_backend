@@ -151,7 +151,7 @@ userRouter.post(
  * @openapi
  * /api/users/{id}:
  *   put:
- *     summary: Atualiza um usuário existente (perfil e arquivos) (requer autenticação e permissão)
+ *     summary: Atualiza completamente um usuário existente (perfil e arquivos) (é necessário enviar todos os campos alterados, pois se não irá sobrescrever o novo ou remover se não tiver os campos) (requer autenticação e permissão)
  *     tags:
  *       - Users
  *     security:

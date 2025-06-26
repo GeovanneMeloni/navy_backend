@@ -61,10 +61,10 @@ async function getById(id: string) {
     return await User.findById(id, { password: 0 });
 }
 
-async function update(id: string, data) {
+async function update(id: string, data: Partial<UserType>) {
     try {
-        await User.updateOne({ _id: id }, data);
-    } catch (error) {
+        await User.updateOne({ _id: id }, { $set: data });
+    } catch (error: any) {
         throw new Error(error.message);
     }
 }
@@ -110,7 +110,7 @@ async function changeOwnPassword(
     oldPassword: string,
     newPassword: string
 ) {
-    console.log(userId);
+    //console.log(userId);
     const user = await User.findById(userId);
 
     if (!user) throw { status: 404, message: "Usuário não encontrado" };

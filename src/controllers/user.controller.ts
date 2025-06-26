@@ -91,7 +91,7 @@ async function createClient(req: Request, res: Response, next: NextFunction) {
         const userProfile = getUserProfile(requestBody);
 
         const contentType = req.headers["content-type"] || "";
-        console.log(contentType);
+        //console.log(contentType);
 
         if (contentType.startsWith("multipart/form-data")) {
             let fotoUrl: string | undefined;
@@ -163,7 +163,7 @@ async function list(req: Request, res: Response, next: NextFunction) {
 async function filterUsers(req: Request, res: Response, next: NextFunction) {
     try {
         const queryParams = req.query;
-        console.log(queryParams);
+        //console.log(queryParams);
         const filters: any = {};
 
         for (const key in queryParams) {
@@ -207,7 +207,7 @@ async function filterUsers(req: Request, res: Response, next: NextFunction) {
                 filters[key] = value;
             }
         }
-        console.log(filters);
+        //console.log(filters);
 
         const rawUsers = await userService.listWithFilter(filters);
 
@@ -231,8 +231,8 @@ async function update(req: Request, res: Response, next: NextFunction) {
             res.status(404).json({ message: "Usuário não encontrado." });
             return;
         }
-        const body = req.body as IUpdateUser;
 
+        const body = req.body as IUpdateUser;
         let userProfile = getUserProfile(body);
         const address = getAddress(body);
 
@@ -241,7 +241,10 @@ async function update(req: Request, res: Response, next: NextFunction) {
         }
 
         const contentType = req.headers["content-type"] || "";
-        console.log(contentType);
+        //console.log(contentType);
+
+        let newFoto: string;
+        let newDocument: string;
 
         if (contentType.startsWith("multipart/form-data")) {
             if (req.files && (req.files["foto"] || req.files["document"])) {
@@ -256,14 +259,25 @@ async function update(req: Request, res: Response, next: NextFunction) {
                     { foto: old.foto, document: old.document }
                 );
 
-                userProfile.foto = uploadResult.foto;
-                userProfile.document = uploadResult.document;
+                newFoto = uploadResult.foto;
+                newDocument = uploadResult.document;
             }
         }
 
+        userProfile.foto = newFoto
+            ? newFoto
+            : user.user_profile?.foto || undefined;
+        userProfile.document = newDocument
+            ? newDocument
+            : user.user_profile?.document || undefined;
+
+        // Aqui está a alteração importante: uso de $set
         const updateData: Partial<UserType> = {
             user_profile: userProfile,
         };
+        //console.log(updateData);
+
+        await userService.update(id, updateData);
 
         await userService.update(String(id), updateData);
 

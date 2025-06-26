@@ -52,7 +52,7 @@ async function createCarForSale(data: CarType) {
         };
     }
 
-    console.log(data);
+    //console.log(data);
 
     if (await existsCarWithSameLicensePlate(data.license_plate)) {
         throw {
