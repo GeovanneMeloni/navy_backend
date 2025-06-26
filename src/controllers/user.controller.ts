@@ -222,6 +222,12 @@ async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
 
+        const user = await userService.getById(String(id));
+
+        if (!user) {
+            res.status(404).json({ message: "Usuário não encontrado." });
+            return;
+        }
         const body = req.body as IUpdateUser;
 
         let userProfile = getUserProfile(body);
@@ -229,13 +235,6 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
         if (address) {
             userProfile.address = address;
-        }
-
-        const user = await userService.getById(String(id));
-
-        if (!user) {
-            res.status(404).json({ message: "Usuário não encontrado." });
-            return;
         }
 
         const contentType = req.headers["content-type"] || "";
@@ -324,6 +323,45 @@ async function changeStatus(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function changeOwnPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        const userId = req["user"].id;
+
+        if (!userId) {
+            res.status(401).json("Usuário não autenticado");
+            return;
+        }
+
+        const result = await userService.changeOwnPassword(
+            userId,
+            oldPassword,
+            newPassword
+        );
+
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { identifier } = req.body;
+
+        const result = await userService.resetUserPassword(identifier);
+
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
     createOperator,
     createClient,
@@ -334,4 +372,6 @@ export default {
     remove,
     getById,
     filterUsers,
+    changeOwnPassword,
+    resetPassword,
 };

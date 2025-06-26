@@ -10,7 +10,7 @@ export const UserProfileSchema = new Schema(
         foto: { type: String, required: false },
         gender: {
             type: String,
-            enum: ["masculino", "feminino"],
+            enum: ["masculino", "feminino", "outro"],
             required: false,
         },
         address: { type: AddressSchema, required: false },

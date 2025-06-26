@@ -263,4 +263,65 @@ userRouter.delete(
  */
 userRouter.get("/:id", auth, userController.getById);
 
+/**
+ * @openapi
+ * /api/users/edit/change-password:
+ *   patch:
+ *     summary: Troca a senha do próprio usuário logado (requer autenticação)
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ChangePasswordInput'
+ *             required: [oldPassword, newPassword]
+ *     responses:
+ *       200:
+ *         description: Senha alterada com sucesso
+ */
+userRouter.patch(
+    "/edit/change-password",
+    auth,
+    userController.changeOwnPassword
+);
+
+/**
+ * @openapi
+ * /api/users/reset-password:
+ *   post:
+ *     summary: Reseta a senha de um usuário (admin)
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               identifier:
+ *                 type: string
+ *                 description: ID ou email do usuário
+ *             required:
+ *               - identifier
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResetPasswordResponse'
+ */
+userRouter.post(
+    "/reset-password",
+    auth,
+    checkPermission("resetPassword", "user"),
+    userController.resetPassword
+);
+
 export { userRouter };

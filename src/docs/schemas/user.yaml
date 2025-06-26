@@ -276,3 +276,17 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/UserResponse"
+
+    ChangePasswordInput:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+
+    ResetPasswordResponse:
+      type: object
+      properties:
+        password:
+          type: string

@@ -115,7 +115,7 @@ carRouter.post(
  * @openapi
  * /api/cars:
  *   put:
- *     summary: Atualiza um carro existente (requer autenticação e permissão)
+ *     summary: Atualiza um carro existente (requer autenticação e permissão - Somente quem criou ou o admin pode mudar)
  *     tags:
  *       - Car
  *     consumes:
@@ -383,7 +383,7 @@ carRouter.get("/:id", carController.getById);
  * @openapi
  * /api/cars/{id}:
  *   delete:
- *     summary: Remove um carro (requer autenticação e permissão)
+ *     summary: Remove um carro (requer autenticação e permissão - Somente quem criou ou o admin pode mudar)
  *     tags:
  *       - Car
  *     parameters:

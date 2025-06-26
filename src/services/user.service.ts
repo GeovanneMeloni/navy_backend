@@ -8,6 +8,7 @@ import {
     ILoginResponse,
 } from "../interface/global";
 import { deleteFile } from "../utils/bucket";
+import crypto from "node:crypto";
 
 async function login(data: ILogin): Promise<ILoginResponse> {
     const user = await User.findOne({ email: data.email }).exec();
@@ -104,6 +105,53 @@ async function remove(id: string) {
     }
 }
 
+async function changeOwnPassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string
+) {
+    console.log(userId);
+    const user = await User.findById(userId);
+
+    if (!user) throw { status: 404, message: "Usuário não encontrado" };
+
+    const isCorrect = await comparePassword(oldPassword, user.password);
+
+    if (!isCorrect) throw { status: 400, message: "Senha antiga incorreta" };
+
+    user.password = await hashPassword(newPassword);
+    await user.save();
+
+    return { message: "Senha atualizada com sucesso" };
+}
+
+async function resetUserPassword(identifier: string) {
+    const isIdentifierUserId =
+        identifier.length === 24 && /^[a-f\d]{24}$/i.test(identifier);
+
+    const user = isIdentifierUserId
+        ? await User.findById(identifier)
+        : await User.findOne({ email: identifier });
+
+    if (!user)
+        throw {
+            status: 404,
+            message: `Usuário não encontrado com esse ${
+                isIdentifierUserId ? "id" : "e-mail"
+            }`,
+        };
+
+    // 12 bytes -> 16 caracteres Base64 (+- 96 bits)
+    const newPassword = crypto.randomBytes(12).toString("base64");
+    user.password = await hashPassword(newPassword);
+
+    await user.save();
+
+    return {
+        password: newPassword,
+    };
+}
+
 export default {
     login,
     create,
@@ -113,4 +161,6 @@ export default {
     remove,
     getById,
     listWithFilter,
+    changeOwnPassword,
+    resetUserPassword,
 };

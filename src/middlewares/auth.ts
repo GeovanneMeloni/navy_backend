@@ -1,22 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JwtPayload } from "../interface/global";
 
 export function auth(req: Request, res: Response, next: NextFunction) {
     try {
-        const authorization = req.headers.authorization;
+        const authHeader = req.headers.authorization;
 
-        if (!authorization || !authorization?.includes("Bearer")) {
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            res.status(401).json({
+                message: "Token não fornecido ou mal formatado",
+            });
+            return;
+        }
+
+        const token = authHeader.split(" ")[1];
+
+        if (!token) {
             res.status(401).json({ message: "Token inválido" });
             return;
         }
 
-        const [_, token] = authorization.split(" ");
-
-        if (!token) {
-            res.status(401).json({ message: "Token inválido" });
-        }
-
-        const decoded: any = jwt.verify(token, process.env.SECRET_TOKEN!);
+        const decoded = jwt.verify(
+            token,
+            process.env.SECRET_TOKEN!
+        ) as JwtPayload;
 
         req["user"] = {
             id: decoded.userId,
@@ -24,21 +31,18 @@ export function auth(req: Request, res: Response, next: NextFunction) {
         };
 
         next();
-    } catch (error) {
-        let errorMessage = "Erro de autenticação";
+    } catch (error: any) {
+        let message = "Erro de autenticação";
 
-        if (error instanceof jwt.JsonWebTokenError) {
-            errorMessage =
-                "Token inválido, verifique se o token é válido e não expirou";
-        } else if (error instanceof jwt.TokenExpiredError) {
-            errorMessage = "Token expirado, por favor faça login novamente";
-        } else {
-            errorMessage = "Erro ao verificar token";
+        if (error instanceof jwt.TokenExpiredError) {
+            message = "Token expirado. Faça login novamente.";
+        } else if (error instanceof jwt.JsonWebTokenError) {
+            message = "Token inválido. Verifique suas credenciais.";
         }
 
-        console.error("Erro de autenticação:", error.message);
+        console.error("Erro no middleware de autenticação:", error.message);
 
-        res.status(401).json({ message: errorMessage });
+        res.status(401).json({ message: message });
         return;
     }
 }

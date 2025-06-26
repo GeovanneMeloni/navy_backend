@@ -87,4 +87,19 @@ interface ILoginResponse {
     };
 }
 
-export { ICreateUser, ILogin, IUser, ICreateCar, ILoginResponse, IUpdateUser };
+interface JwtPayload {
+    userId: string;
+    role: string;
+    iat: number;
+    exp: number;
+}
+
+export {
+    ICreateUser,
+    ILogin,
+    IUser,
+    ICreateCar,
+    ILoginResponse,
+    IUpdateUser,
+    JwtPayload,
+};

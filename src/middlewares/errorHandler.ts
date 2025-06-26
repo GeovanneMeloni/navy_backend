@@ -30,5 +30,7 @@ export function errorHandler(
 
     let errorDetails = err.errorDetails || undefined;
 
+    console.error(err);
+
     res.status(status).json({ error: message, errorDetails });
 }
