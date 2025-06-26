@@ -1,4 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
+import { Request } from "express";
+
 import { getSignedUrl } from "./bucket";
 import { supabaseClient } from "../lib/supabase";
 import { AddressType } from "../models/user/address.schema";
@@ -119,6 +121,16 @@ export function getAddress(data: ICreateUser): AddressType | undefined {
     }
 
     return address;
+}
+
+export function getUserIdFromRequest(req: Request): string {
+    const userId = req["user"].id;
+
+    if (!userId) {
+        throw { status: 401, message: "Usuário não autenticado" };
+    }
+
+    return userId;
 }
 
 export function getUserProfile(data: ICreateUser): UserProfileType {

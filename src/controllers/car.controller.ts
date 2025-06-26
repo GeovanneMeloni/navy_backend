@@ -3,7 +3,7 @@ import carService from "../services/car.service";
 import { deleteFile, uploadFile } from "../utils/bucket";
 import { formatCarRequestData, GetCarWithSignedUrl } from "../utils/car.utils";
 import mongoose from "mongoose";
-import { getAddress } from "../utils/user.utils";
+import { getAddress, getUserIdFromRequest } from "../utils/user.utils";
 
 // métodos post
 async function create(
@@ -14,7 +14,8 @@ async function create(
     try {
         const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
-        const data = formatCarRequestData(req, photoCarUrl);
+        const userId = getUserIdFromRequest(req);
+        const data = formatCarRequestData(req, photoCarUrl, userId);
 
         const createdCar = await carService.create(data);
 
@@ -34,7 +35,8 @@ async function createForSale(
     try {
         const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
-        const data = formatCarRequestData(req, photoCarUrl);
+        const userId = getUserIdFromRequest(req);
+        const data = formatCarRequestData(req, photoCarUrl, userId);
 
         const createdCar = await carService.createCarForSale(data);
 
@@ -52,7 +54,8 @@ async function createForRent(
     try {
         const photoCarUrl: string = await GetAndUploadCarPhoto(req);
 
-        const data = formatCarRequestData(req, photoCarUrl);
+        const userId = getUserIdFromRequest(req);
+        const data = formatCarRequestData(req, photoCarUrl, userId);
 
         const createdCar = await carService.createCarForRent(data);
 
@@ -288,6 +291,7 @@ async function update(req: Request, res: Response, next: NextFunction) {
         }
 
         // Formata dados
+        // não irá atualizar a propriedade owner_id
         const data = formatCarRequestData(req, newPhotoUrl);
 
         const updatedCar = await carService.updateCar(id, data);

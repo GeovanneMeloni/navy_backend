@@ -47,7 +47,8 @@ import { Request } from "express";
 
 export function formatCarRequestData(
     req: Request,
-    photo_url?: string
+    photo_url?: string,
+    current_user_id?: string
 ): CarType {
     const {
         operationType,
@@ -100,12 +101,50 @@ export function formatCarRequestData(
         status,
         rented_at,
         sold_at,
-        rented_by: new mongoose.Types.ObjectId(rented_by) || undefined,
-        sold_to: new mongoose.Types.ObjectId(sold_to) || undefined,
-        owner_id: new mongoose.Types.ObjectId(owner_id) || undefined,
+        rented_by: undefined,
+        sold_to: undefined,
+        owner_id: undefined,
+        //rented_by: new mongoose.Types.ObjectId(rented_by) || undefined,
+        //sold_to: new mongoose.Types.ObjectId(sold_to) || undefined,
+        //owner_id: new mongoose.Types.ObjectId(owner_id) || undefined,
         address: address,
         photo_url: photo_url || undefined,
     };
+
+    if (rented_by) {
+        if (mongoose.Types.ObjectId.isValid(rented_by) == false) {
+            throw {
+                status: 400,
+                message:
+                    "ID do usuário que irá alugar não está no formato válido",
+            };
+        }
+        data.rented_by = new mongoose.Types.ObjectId(rented_by);
+    }
+
+    if (sold_to) {
+        if (mongoose.Types.ObjectId.isValid(sold_to) == false) {
+            throw {
+                status: 400,
+                message:
+                    "ID do usuário que irá comprar o carro não está no formato válido",
+            };
+        }
+        data.sold_to = new mongoose.Types.ObjectId(sold_to);
+    }
+
+    const actualOwnerId = current_user_id || owner_id;
+
+    if (actualOwnerId) {
+        if (mongoose.Types.ObjectId.isValid(actualOwnerId) == false) {
+            throw {
+                status: 400,
+                message:
+                    "ID do proprietário do carro não está no formato válido",
+            };
+        }
+        data.owner_id = new mongoose.Types.ObjectId(actualOwnerId);
+    }
 
     return data;
 }

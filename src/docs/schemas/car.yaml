@@ -29,6 +29,7 @@ components:
         price_per_hour:
           type: number
         owner_id:
+          description: "Proprietário do carro, se não definido, irá ser trazer o ID do usuário logado"
           type: string
         cep:
           type: string
@@ -55,7 +56,6 @@ components:
         - brand
         - year
         - color
-        - owner_id
 
     CarInputJson:
       type: object
@@ -86,6 +86,7 @@ components:
         price_per_hour:
           type: number
         owner_id:
+          description: "Proprietário do carro, se não definido, irá ser trazer o ID do usuário logado"
           type: string
         cep:
           type: string
@@ -109,7 +110,6 @@ components:
         - brand
         - year
         - color
-        - owner_id
 
     CarUpdateInput:
       type: object

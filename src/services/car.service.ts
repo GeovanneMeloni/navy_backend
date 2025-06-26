@@ -26,11 +26,7 @@ async function create(data: CarType) {
         };
     }
 
-    const carWithSameLicensePlate = await Car.find({
-        license_plate: data.license_plate,
-    });
-
-    if (carWithSameLicensePlate) {
+    if (await existsCarWithSameLicensePlate(data.license_plate)) {
         throw {
             status: 400,
             message: "Carro já criado com essa placa!",
@@ -56,11 +52,9 @@ async function createCarForSale(data: CarType) {
         };
     }
 
-    const carWithSameLicensePlate = await Car.find({
-        license_plate: data.license_plate,
-    });
+    console.log(data);
 
-    if (carWithSameLicensePlate) {
+    if (await existsCarWithSameLicensePlate(data.license_plate)) {
         throw {
             status: 400,
             message: "Carro já criado com essa placa!",
@@ -95,11 +89,7 @@ async function createCarForRent(data: CarType) {
         };
     }
 
-    const carWithSameLicensePlate = await Car.find({
-        license_plate: data.license_plate,
-    });
-
-    if (!carWithSameLicensePlate) {
+    if (await existsCarWithSameLicensePlate(data.license_plate)) {
         throw {
             status: 400,
             message: "Carro já criado com essa placa!",
@@ -266,6 +256,15 @@ async function checkCarOwnership(
     }
 
     return car.owner_id.toString() === userId;
+}
+
+async function existsCarWithSameLicensePlate(license_plate: string) {
+    const normalized = license_plate.trim().toUpperCase();
+    const car = await Car.findOne({
+        license_plate: { $regex: `^${normalized}$`, $options: "i" },
+    }).exec();
+
+    return car != null;
 }
 
 export default {

@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import {
     attachSignedUrlsToProfile,
     getAddress,
+    getUserIdFromRequest,
     getUserProfile,
     saveProfileFiles,
 } from "../utils/user.utils";
@@ -331,7 +332,7 @@ async function changeOwnPassword(
     try {
         const { oldPassword, newPassword } = req.body;
 
-        const userId = req["user"].id;
+        const userId = getUserIdFromRequest(req);
 
         if (!userId) {
             res.status(401).json("Usuário não autenticado");
