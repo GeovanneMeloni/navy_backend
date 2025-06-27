@@ -3,7 +3,7 @@ import userService from "../services/user.service";
 import { ICreateUser, IUpdateUser, IUser } from "../interface/global";
 import { UserType } from "../models/user/user.model";
 import { uploadFile } from "../utils/bucket";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import {
     attachSignedUrlsToProfile,
     getAddress,
@@ -221,9 +221,52 @@ async function filterUsers(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function updateRawUser(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+
+        if (!id || !mongoose.isValidObjectId(String(id))) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
+
+        const updateData = req.body;
+
+        const user = await userService.getById(String(id));
+
+        if (!user) {
+            res.status(404).json({ message: "Usuário não encontrado." });
+            return;
+        }
+
+        if (user.user_profile?.foto) {
+            updateData.user_profile.foto = user.user_profile?.foto;
+        }
+
+        if (user.user_profile?.document) {
+            updateData.user_profile.document = user.user_profile?.document;
+        }
+
+        await userService.update(String(id), updateData);
+
+        const updatedUser = await userService.getById(String(id));
+
+        const userWithSignedUrls = await attachSignedUrlsToProfile(updatedUser);
+
+        res.status(200).json(userWithSignedUrls);
+    } catch (error: any) {
+        next(error);
+    }
+}
+
 async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        if (!id || !mongoose.isValidObjectId(String(id))) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
 
         const user = await userService.getById(String(id));
 
@@ -276,8 +319,6 @@ async function update(req: Request, res: Response, next: NextFunction) {
             user_profile: userProfile,
         };
         //console.log(updateData);
-
-        await userService.update(id, updateData);
 
         await userService.update(String(id), updateData);
 
@@ -335,6 +376,12 @@ async function getById(req: Request, res: Response, next: NextFunction) {
 async function changeStatus(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
+
+        if (!id || !mongoose.isValidObjectId(String(id))) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
+
         await userService.changeStatus(String(id));
         res.status(204).json({ message: "Status atualizado com sucesso" });
     } catch (error) {
@@ -393,4 +440,5 @@ export default {
     filterUsers,
     changeOwnPassword,
     resetPassword,
+    updateRawUser,
 };

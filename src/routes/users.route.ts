@@ -189,6 +189,42 @@ userRouter.put(
 
 /**
  * @openapi
+ * /api/users/update/{id}:
+ *   put:
+ *     summary: Atualiza um usuário o mesmo tipo de dados que é armazenado no banco de dados
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRawRequestJson'
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
+ */
+userRouter.put(
+    "/update/:id",
+    auth,
+    checkPermission("edit", "user"),
+    checkOwnResource,
+    userController.updateRawUser
+);
+
+/**
+ * @openapi
  * /api/users/{id}:
  *   patch:
  *     summary: Altera o status de um usuário (requer autenticação e permissão)

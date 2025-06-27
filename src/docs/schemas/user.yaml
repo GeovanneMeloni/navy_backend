@@ -298,3 +298,19 @@ components:
       properties:
         password:
           type: string
+
+    UserRawRequestJson:
+      type: object
+      properties:
+        email:
+          type: string
+        active:
+          type: boolean
+        role:
+          type: string
+          enum: [admin, employee, client]
+        userType:
+          type: string
+          enum: ["individual", "company", "navy"]
+        user_profile:
+          $ref: "#/components/schemas/UserProfile"
