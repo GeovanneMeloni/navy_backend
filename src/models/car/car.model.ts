@@ -131,6 +131,7 @@ export const CarSchema = new Schema(
             type: String,
             required: false,
             description: "Transmissão do carro (ex: Automático, Manual)",
+            default: "manual",
         }, // Automático / Manual
     },
     { versionKey: false }

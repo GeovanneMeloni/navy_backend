@@ -44,9 +44,9 @@ async function create(data: UserType) {
 
     const createdUser = await user.save();
 
-    const userWithoutId = await User.findById(createdUser._id, { password: 0 });
+    const userWithId = await User.findById(createdUser._id, { password: 0 });
 
-    return userWithoutId;
+    return userWithId;
 }
 
 async function list() {

@@ -19,7 +19,7 @@ async function create(
 
         const createdCar = await carService.create(data);
 
-        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+        const createdCarWithFoto = await GetCarWithSignedUrl(createdCar);
 
         res.status(200).json(createdCarWithFoto);
     } catch (error) {
@@ -40,7 +40,7 @@ async function createForSale(
 
         const createdCar = await carService.createCarForSale(data);
 
-        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+        const createdCarWithFoto = await GetCarWithSignedUrl(createdCar);
 
         res.status(200).json(createdCarWithFoto);
     } catch (error) {
@@ -61,7 +61,7 @@ async function createForRent(
 
         const createdCar = await carService.createCarForRent(data);
 
-        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+        const createdCarWithFoto = await GetCarWithSignedUrl(createdCar);
 
         res.status(200).json(createdCarWithFoto);
     } catch (error) {

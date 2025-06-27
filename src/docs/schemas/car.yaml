@@ -214,7 +214,18 @@ components:
           enum: [rent, sale]
         price_per_hour:
           type: number
-          example: 95
+          example: 131
+          description: "Preço de aluguel por hora"
+        price:
+          type: number
+          example: 86022
+          description: "Preço de venda"
+        group:
+          type: string
+          example: "CHERY"
+        photo_url:
+          type: string
+          nullable: true
         license_plate:
           type: string
           example: "DEXKYJG"
@@ -246,22 +257,23 @@ components:
           example: "685600c02a357ad2c0adf49d"
         model:
           type: string
-          example: "1"
+          example: "Camaro"
         brand:
           type: string
-          example: "Porsche"
+          example: "Chevrolet "
         year:
           type: integer
           example: 2015
         color:
           type: string
-          example: "escarlate"
+          example: "preto"
         fuel_type:
           type: string
           example: "diesel"
         transmission:
           type: string
-          example: "semi-automático"
+          example: "manual"
+          description: "Transmissão do carro, ex: (Manual, Automático, Semi-Automático)"
 
     CarListResponse:
       type: array

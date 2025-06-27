@@ -11,9 +11,11 @@ import { StorageApiError } from "@supabase/storage-js";
 function generateShortDescription(car: Partial<CarType>): string {
     const { mileage, brand, model, year, transmission } = car;
 
+    let currentModel = model || "manual";
+
     const mileageString = mileage ? `${mileage.toLocaleString()} km` : "0 km";
 
-    return `${brand.toUpperCase()} ${model.toUpperCase()} ${mileageString} ${year} ${transmission.toUpperCase()}`.trim();
+    return `${brand?.toUpperCase()} ${currentModel.toUpperCase()} ${mileageString} ${year} ${transmission?.toUpperCase()}`.trim();
 }
 
 async function GetCarWithSignedUrl(car: CarType): Promise<CarType> {
