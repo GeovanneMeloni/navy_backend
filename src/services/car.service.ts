@@ -37,7 +37,11 @@ async function create(data: CarType) {
 
     const car = new Car(data);
 
-    return await car.save();
+    const createdCar = await car.save();
+
+    const carWithId = await Car.findById(createdCar._id);
+
+    return carWithId;
 }
 
 async function createCarForSale(data: CarType) {
@@ -72,7 +76,11 @@ async function createCarForSale(data: CarType) {
     }
 
     const car = new Car(data);
-    return await car.save();
+    const createdCar = await car.save();
+
+    const carWithId = await Car.findById(createdCar._id);
+
+    return carWithId;
 }
 
 async function createCarForRent(data: CarType) {
@@ -104,7 +112,12 @@ async function createCarForRent(data: CarType) {
     }
 
     const car = new Car(data);
-    return await car.save();
+
+    const createdCar = await car.save();
+
+    const carWithId = await Car.findById(createdCar._id);
+
+    return carWithId;
 }
 
 async function buyCar(carId: string, buyerId: string) {
