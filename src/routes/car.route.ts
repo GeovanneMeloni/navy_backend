@@ -223,6 +223,32 @@ carRouter.get("/", carController.list);
 
 /**
  * @openapi
+ * /api/cars/filter:
+ *   get:
+ *     summary: Lista todos os carros com filtros personalizados
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: query
+ *         name: queryString
+ *         description: Digite o nome do campo e seu valor, para campos aninhandos utilize o ponto (.), por exemplo car.address.estado
+ *         schema:
+ *           type: object
+ *           additionalProperties:
+ *             type: string
+ *
+ *     responses:
+ *       200:
+ *         description: Lista de carros filtrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
+ */
+carRouter.get("/filter", carController.filterCars);
+
+/**
+ * @openapi
  * /api/cars/available/sale:
  *   get:
  *     summary: Lista todos os carros disponíveis para venda

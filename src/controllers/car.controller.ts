@@ -19,7 +19,9 @@ async function create(
 
         const createdCar = await carService.create(data);
 
-        res.status(200).json(createdCar);
+        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+
+        res.status(200).json(createdCarWithFoto);
     } catch (error) {
         next(error);
     }
@@ -38,7 +40,9 @@ async function createForSale(
 
         const createdCar = await carService.createCarForSale(data);
 
-        res.status(200).json(createdCar);
+        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+
+        res.status(200).json(createdCarWithFoto);
     } catch (error) {
         next(error);
     }
@@ -57,7 +61,9 @@ async function createForRent(
 
         const createdCar = await carService.createCarForRent(data);
 
-        res.status(200).json(createdCar);
+        const createdCarWithFoto = GetCarWithSignedUrl(createdCar);
+
+        res.status(200).json(createdCarWithFoto);
     } catch (error) {
         next(error);
     }
@@ -214,8 +220,11 @@ async function listAvailableForSaleByOwner(
 ) {
     try {
         const { ownerId } = req.params;
+
         const cars = await carService.getAllAvailableForSaleByOwner(ownerId);
+
         const carsWithUrl = await Promise.all(cars.map(GetCarWithSignedUrl));
+
         res.status(200).json(carsWithUrl);
     } catch (error) {
         next(error);
@@ -229,8 +238,11 @@ async function listAvailableForRentByOwner(
 ) {
     try {
         const { ownerId } = req.params;
+
         const cars = await carService.getAllAvailableForRentByOwner(ownerId);
+
         const carsWithUrl = await Promise.all(cars.map(GetCarWithSignedUrl));
+
         res.status(200).json(carsWithUrl);
     } catch (error) {
         next(error);
@@ -292,7 +304,9 @@ async function update(req: Request, res: Response, next: NextFunction) {
 
         const updatedCar = await carService.updateCar(id, data);
 
-        res.status(200).json(updatedCar);
+        const carWithUrl = await GetCarWithSignedUrl(updatedCar);
+
+        res.status(200).json(carWithUrl);
     } catch (error) {
         next(error);
     }
@@ -334,6 +348,64 @@ async function GetAndUploadCarPhoto(req: Request): Promise<string | undefined> {
     }
 }
 
+async function filterCars(req: Request, res: Response, next: NextFunction) {
+    try {
+        const queryParams = req.query;
+        //console.log(queryParams);
+        const filters: any = {};
+
+        for (const key in queryParams) {
+            if (!queryParams[key]) continue;
+
+            const value = queryParams[key] as string;
+
+            // Suporte a booleano
+            if (value === "true" || value === "false") {
+                filters[key] = value === "true";
+            }
+            // Campos que fazem busca aproximada (regex case-insensitive)
+            else if (
+                [
+                    "operationType",
+                    "license_plate",
+                    "status",
+                    "short_description",
+                    "address.cep",
+                    "address.rua",
+                    "address.numero",
+                    "address.logradouro",
+                    "address.estado",
+                    "address.municipio",
+                    "model",
+                    "brand",
+                    "color",
+                    "fuel_type",
+                    "transmission",
+                ].includes(key)
+            ) {
+                filters[key] = { $regex: new RegExp(value, "i") };
+            }
+            // Campos numéricos e geográficos (latitude/longitude)
+            else if (["year", "mileage", "price_per_hour"].includes(key)) {
+                filters[key] = Number(value);
+            }
+            // Padrão
+            else {
+                filters[key] = value;
+            }
+        }
+        //console.log(filters);
+
+        const cars = await carService.getAllWithFilter(filters);
+
+        const carsWithUrl = await Promise.all(cars.map(GetCarWithSignedUrl));
+
+        res.status(200).json(carsWithUrl);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
     create,
     createForSale,
@@ -352,4 +424,5 @@ export default {
     getById,
     update,
     remove,
+    filterCars,
 };

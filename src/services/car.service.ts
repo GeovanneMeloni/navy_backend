@@ -172,6 +172,10 @@ async function getAll() {
     return await Car.find().exec();
 }
 
+async function getAllWithFilter(filters: any) {
+    return Car.find(filters).exec();
+}
+
 async function getAllAvailableForRent() {
     return await Car.find({ operationType: "rent", status: "available" });
 }
@@ -286,4 +290,5 @@ export default {
     create,
     remove,
     checkCarOwnership,
+    getAllWithFilter,
 };
