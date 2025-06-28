@@ -14,6 +14,8 @@ O **Navy Backend** é uma API RESTful voltada para o gerenciamento de uma frota 
 
 Ele oferece um conjunto robusto de recursos com **foco em segurança**, **controle de acesso baseado em papéis (RBAC)** e **limitação de requisições**.
 
+Acesse a documentação da API pelo Swagger [clicando aqui](https://navy-backend.onrender.com/swagger/)
+
 ## 🔮 Autores
 
 - Adriano Barros
@@ -29,12 +31,20 @@ Ele oferece um conjunto robusto de recursos com **foco em segurança**, **contro
 
 - 🚗 Cadastro, edição, listagem e remoção de veículos (para venda ou aluguel)
 - 📦 Upload de fotos e documentos para Supabase Storage
-- 👥 Cadastro e controle de usuários com diferentes papéis: `admin`, `employee`, `client`
+- 👥 Cadastro e controle de usuários com diferentes papéis (roles): `admin`, `employee`, `client`
 - 🔐 **Autenticação com JWT**
 - 🔒 **Controle de permissões com RBAC** para proteger rotas conforme papel do usuário
 - 📊 Dashboard com dados estatísticos (usuários ativos, carros vendidos, carros alugados, receitas mensais etc.)
 - 📑 Documentação automática das rotas com Swagger
 - 🛡️ **Limitação de taxa de requisições (Rate Limit)** para proteger a API contra abuso
+
+## 📊 Exemplo de Dados do Dashboard
+
+- Total de usuários ativos/inativos
+- Distribuição por gênero
+- Total de carros cadastrados, vendidos e alugados
+- Receitas mensais
+- Vendas por modelo de carro
 
 ## 🔐 Segurança
 
@@ -50,15 +60,34 @@ Ele oferece um conjunto robusto de recursos com **foco em segurança**, **contro
 
 ### ⛑ Rate Limiting
 
-- Utilização de `express-rate-limit` para restringir a quantidade de requisições por IP, protegendo contra ataques de força bruta e abuso de API.
+- Utilização de `express-rate-limit` para restringir a quantidade de requisições por IP, protegendo contra ataques DDoS, de força bruta e abuso de API.
 
-## 📊 Exemplo de Dados do Dashboard
+## 🔐 Relatório Final de Segurança — Análise de Ameaças
 
-- Total de usuários ativos/inativos
-- Distribuição por gênero
-- Total de carros cadastrados, vendidos e alugados
-- Receitas mensais
-- Vendas por modelo de carro
+Este relatório detalha as principais ameaças identificadas no modelo de ameaças foram mitigadas no projeto.
+
+![Threat Modeling Report](./docs/Threat%20Modeling%20Report.png)
+
+### ✅ Mapeamento e Mitigações
+
+| Categoria de Ameaça         | Descrição                                                                                   | Mitigação Implementada                                                                 |
+|----------------------------|-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| **Spoofing**               | Risco de usuários forjarem identidades e acessarem recursos não autorizados.                | Implementação de autenticação via **JWT**, garantindo a identidade do usuário.        |
+| **Elevation of Privilege** | Aplicativo poderia atuar com privilégios além dos permitidos pelo contexto do usuário.       | Implementado **controle de permissões RBAC** para limitar ações conforme a role.     |
+| **Repudiation**            | A API poderia negar ter recebido requisições externas.                                       | Todas as requisições sensíveis são **logadas** e identificadas via **token JWT**.    |
+| **Information Disclosure** | Risco de vazamento de informações sensíveis (e.g., senhas, documentos).                      | Uso de **hash de senha com bcrypt**, campos sensíveis não retornados nas respostas.   |
+| **Denial of Service**      | Risco de sobrecarga da API por requisições em massa.                                         | Utilização do **express-rate-limit** para limitar acessos por IP.                    |
+| **Tampering**              | Possibilidade de alterar dados em trânsito ou entrada maliciosa.                            | Dados são validados pelo schema definido no MongoDB. HTTPS é obrigatório no ambiente online.|
+| **Remote Code Execution**  | Risco de execução de código arbitrário via entrada controlada.                              | Nenhum dado do usuário é executado. Apenas armazenamento e validação de texto/imagem.|
+
+## 🛡️ Práticas de Segurança Adotadas
+
+- 🔐 **JWT Token**: Toda autenticação é feita com `Bearer Token` seguro e assinado, se houver alguma alteração no JWT o login não é realizado garantindo a Confidencialidade e Autenticidade
+- 🧱 **RBAC (Role-Based Access Control)**: Permissões definidas por recurso (`car`, `user`, `dashboard`) e ação (`view`, `edit`, etc.) garantindo a Autencidade.
+- 🧼 **Validação de Entrada**: Todas as rotas validam entrada com validação manual pelo schema do MongoDB, garantindo tipos corretos e dados.
+- 🛡️ **Rate Limiting**: Proteção contra abuso com `express-rate-limit` que garante a alta disponibilidade da aplicação sem interrupção de ataque via DDoS.
+- 🧊 **Storage Seguro (Supabase)**: As imagens/documentos dos usuários são armazenados com controle de acesso e URL assinado permitindo a Integridade dos dados.
+- 🔒 **Hash de Senhas com Bcrypt**: Senhas nunca são salvas em texto plano, são criptografadas com Hashing e Salting, permitindo assim a Integridade das senhas do usuários caso ocorra algum vazamento dos dados.
 
 ## 📦 Tecnologias Utilizadas
 

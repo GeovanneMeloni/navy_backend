@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit";
 
 const apiRateLimiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutos
-    max: 500, // Limite de 500 requisições por IP
+    max: 200, // Limite de 200 requisições por IP
     message: {
         error: "Too many requests, please try again later.",
     },
