@@ -14,6 +14,17 @@ O **Navy Backend** é uma API RESTful voltada para o gerenciamento de uma frota 
 
 Ele oferece um conjunto robusto de recursos com **foco em segurança**, **controle de acesso baseado em papéis (RBAC)** e **limitação de requisições**.
 
+## 🔮 Autores
+
+- Adriano Barros
+- Brendon Gomes
+- Elias Sousa
+- Felipe De Novais
+- Gabriel Viana
+- Geovanne Meloni
+- Larissa Nunes
+- Rafael Gonçalves
+
 ## ✨ Funcionalidades
 
 - 🚗 Cadastro, edição, listagem e remoção de veículos (para venda ou aluguel)
@@ -69,9 +80,9 @@ Ele oferece um conjunto robusto de recursos com **foco em segurança**, **contro
 npm install
 ```
 
-2. Configure o arquivo `.env` com suas variáveis (veja `.env.example`).
+1. É necessário configurar o arquivo `.env` com suas variáveis (veja `.env.example`).
 
-3. (Opcional) Popule o banco com dados fictícios:
+2. (Opcional) Popule o banco com dados fictícios:
 
 ```bash
 npm run seed
