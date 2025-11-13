@@ -138,6 +138,7 @@ async function list(req: Request, res: Response, next: NextFunction) {
 
         res.status(200).json(carsWithUrl);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 }

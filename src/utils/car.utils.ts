@@ -23,8 +23,8 @@ async function GetCarWithSignedUrl(car: CarType): Promise<CarType> {
 
     try {
         const signedUrl = await getSignedUrl(car.photo_url);
-        //console.log("Signed URL gerada:", signedUrl);
-        //console.log("Old URL", car.photo_url);
+        console.log("Signed URL gerada:", signedUrl);
+        console.log("Old URL", car.photo_url);
         car.photo_url = signedUrl;
         return car;
     } catch (err) {
