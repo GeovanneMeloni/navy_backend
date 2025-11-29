@@ -4,7 +4,7 @@
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/mongodb-%2347A248.svg?style=for-the-badge&logo=mongodb&logoColor=white)
-![Supabase](https://img.shields.io/badge/supabase-%233FCF8E.svg?style=for-the-badge&logo=supabase&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 ![Express](https://img.shields.io/badge/express-%23000000.svg?style=for-the-badge&logo=express&logoColor=white)
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 
@@ -30,7 +30,7 @@ Acesse a documentação da API pelo Swagger [clicando aqui](https://navy-backend
 ## ✨ Funcionalidades
 
 - 🚗 Cadastro, edição, listagem e remoção de veículos (para venda ou aluguel)
-- 📦 Upload de fotos e documentos para Supabase Storage
+- 📦 Upload de fotos e documentos para Cloudinary
 - 👥 Cadastro e controle de usuários com diferentes papéis (roles): `admin`, `employee`, `client`
 - 🔐 **Autenticação com JWT**
 - 🔒 **Controle de permissões com RBAC** para proteger rotas conforme papel do usuário
@@ -86,7 +86,7 @@ Este relatório detalha as principais ameaças identificadas no modelo de ameaç
 - 🧱 **RBAC (Role-Based Access Control)**: Permissões definidas por recurso (`car`, `user`, `dashboard`) e ação (`view`, `edit`, etc.) garantindo a Autencidade.
 - 🧼 **Validação de Entrada**: Todas as rotas validam entrada com validação manual pelo schema do MongoDB, garantindo tipos corretos e dados.
 - 🛡️ **Rate Limiting**: Proteção contra abuso com `express-rate-limit` que garante a alta disponibilidade da aplicação sem interrupção de ataque via DDoS.
-- 🧊 **Storage Seguro (Supabase)**: As imagens/documentos dos usuários são armazenados com controle de acesso e URL assinado permitindo a Integridade dos dados.
+- 🧊 **Storage Seguro (Cloudinary)**: As imagens/documentos dos usuários são armazenados na collection "navy" do Cloudinary com controle de acesso e URLs seguras permitindo a Integridade dos dados.
 - 🔒 **Hash de Senhas com Bcrypt**: Senhas nunca são salvas em texto plano, são criptografadas com Hashing e Salting, permitindo assim a Integridade das senhas do usuários caso ocorra algum vazamento dos dados.
 
 ## 📦 Tecnologias Utilizadas
@@ -95,7 +95,7 @@ Este relatório detalha as principais ameaças identificadas no modelo de ameaç
 - [Express](https://expressjs.com/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [MongoDB + Mongoose](https://mongoosejs.com/)
-- [Supabase Storage](https://supabase.com/)
+- [Cloudinary](https://cloudinary.com/)
 - [JWT](https://jwt.io/)
 - [Multer](https://github.com/expressjs/multer)
 - [Swagger + OpenAPI](https://swagger.io/)
@@ -145,7 +145,7 @@ src/
 ├── routes/        -- Definição das rotas
 ├── security/      -- RBAC (checkPermission.ts, permissions.ts)
 ├── services/      -- Camada de Serviço das APIs
-├── utils/         -- Supabase, helpers, etc.
+├── utils/         -- Cloudinary, helpers, etc.
 └── swagger/       -- Configuração do swagger
 ```
 

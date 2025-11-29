@@ -3,7 +3,6 @@ import { ICreateCar } from "../interface/global";
 import { CarType } from "../models/car/car.model";
 import { AddressType } from "../models/user/address.schema";
 import { getSignedUrl } from "./bucket";
-import { StorageApiError } from "@supabase/storage-js";
 
 // Gera uma descrição resumida do carro
 // com base nos detalhes e quilometragem
@@ -27,15 +26,12 @@ async function GetCarWithSignedUrl(car: CarType): Promise<CarType> {
         console.log("Old URL", car.photo_url);
         car.photo_url = signedUrl;
         return car;
-    } catch (err) {
+    } catch (err: any) {
         console.error("Erro ao gerar signed URL:", err);
-        // verificar se é stoargeapierror e object not found
-        if (
-            err instanceof StorageApiError &&
-            err.message.includes("Object not found")
-        ) {
+        // verificar se a imagem não foi encontrada
+        if (err?.message?.includes("not found") || err?.message?.includes("Invalid")) {
             console.error(
-                "Imagem do carro não encontrada no bucket:",
+                "Imagem do carro não encontrada no Cloudinary:",
                 car.photo_url
             );
             car.photo_url = "not_found"; // Remove a URL se não for encontrada

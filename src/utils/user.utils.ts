@@ -1,7 +1,6 @@
 import { Request } from "express";
 
-import { getSignedUrl } from "./bucket";
-import { supabaseClient } from "../lib/supabase";
+import { getSignedUrl, uploadFile, deleteFile } from "./bucket";
 import { AddressType } from "../models/user/address.schema";
 import { ICreateUser } from "../interface/global";
 import { UserProfileType } from "../models/user/userProfile.schema";
@@ -39,50 +38,39 @@ export async function saveProfileFiles(
 ): Promise<{ foto?: string; document?: string }> {
     const out: any = {};
     // remove arquivos antigos se vierem
-    const toDelete: string[] = [];
+    const deleteTasks: Promise<void>[] = [];
 
-    if (oldPaths?.foto) toDelete.push(oldPaths.foto);
+    if (oldPaths?.foto) {
+        deleteTasks.push(deleteFile(oldPaths.foto));
+    }
 
-    if (oldPaths?.document) toDelete.push(oldPaths.document);
+    if (oldPaths?.document) {
+        deleteTasks.push(deleteFile(oldPaths.document));
+    }
 
-    if (toDelete.length) {
-        const { error: delErr } = await supabaseClient.storage
-            .from("navy-bucket")
-            .remove(toDelete);
-
-        if (delErr) throw delErr;
+    if (deleteTasks.length) {
+        await Promise.all(deleteTasks);
     }
 
     const uploadTasks = [];
 
     if (files.foto?.[0]) {
         const f = files.foto[0];
-
         const path = `fotos/${Date.now()}_${f.originalname}`;
 
         uploadTasks.push(
-            supabaseClient.storage
-                .from("navy-bucket")
-                .upload(path, f.buffer, { upsert: true })
-                .then(({ data, error }) => {
-                    if (error) throw error;
-
-                    out.foto = data.path;
-                })
+            uploadFile(f.buffer, path).then((publicId) => {
+                out.foto = publicId;
+            })
         );
     }
     if (files.document?.[0]) {
         const d = files.document[0];
         const path = `documentos/${Date.now()}_${d.originalname}`;
         uploadTasks.push(
-            supabaseClient.storage
-                .from("navy-bucket")
-                .upload(path, d.buffer, { upsert: true })
-                .then(({ data, error }) => {
-                    if (error) throw error;
-
-                    out.document = data.path;
-                })
+            uploadFile(d.buffer, path).then((publicId) => {
+                out.document = publicId;
+            })
         );
     }
     await Promise.all(uploadTasks);
