@@ -12,8 +12,8 @@ mongoose
     .connect(process.env.MONGO_URI!)
     .catch((err) => console.error("Erro ao conectar no MongoDB:", err));
 
-app.use(helmet());
 app.use(e.json());
+app.use(helmet());
 app.use(cors());
 
 app.use(apiRateLimiter);
