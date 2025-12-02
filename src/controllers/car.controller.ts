@@ -78,7 +78,7 @@ async function buy(req: Request, res: Response, next: NextFunction) {
             throw { status: 400, message: "ID do carro inválido" };
         }
 
-        const { buyerId } = req.body;
+        const buyerId = getUserIdFromRequest(req);
 
         if (!mongoose.Types.ObjectId.isValid(buyerId)) {
             throw { status: 400, message: "ID do comprador inválido" };
