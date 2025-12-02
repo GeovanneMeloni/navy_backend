@@ -120,7 +120,7 @@ async function rent(req: Request, res: Response, next: NextFunction) {
             throw { status: 400, message: "ID do carro inválido" };
         }
 
-        const { renterId } = req.body;
+        const renterId = getUserIdFromRequest(req);
 
         if (!mongoose.Types.ObjectId.isValid(renterId)) {
             throw { status: 400, message: "ID do locatário inválido" };
