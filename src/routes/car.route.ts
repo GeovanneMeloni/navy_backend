@@ -252,6 +252,46 @@ carRouter.patch(
 
 /**
  * @openapi
+ * /api/cars/my-purchases:
+ *   get:
+ *     summary: Lista os carros comprados pelo usuário logado (requer autenticação)
+ *     tags:
+ *       - Car
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Uma lista de carros que o usuário comprou.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
+ */
+carRouter.get("/my-purchases", auth, carController.listMyPurchases);
+
+/**
+ * @openapi
+ * /api/cars/my-canceled-purchases:
+ *   get:
+ *     summary: Lista as compras de carros que foram canceladas pelo usuário logado (requer autenticação)
+ *     tags:
+ *       - Car
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Um histórico de registros de compras que foram canceladas pelo usuário.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PurchaseLog'
+ */
+carRouter.get("/my-canceled-purchases", auth, carController.listMyCanceledPurchases);
+
+/**
+ * @openapi
  * /api/cars/return/{id}:
  *   patch:
  *     summary: Realiza a devolução de um carro alugado (requer autenticação e permissão)
@@ -470,68 +510,5 @@ carRouter.get(
  *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.get("/:id", carController.getById);
-
-/**
- * @openapi
- * /api/cars/{id}:
- *   delete:
- *     summary: Remove um carro (requer autenticação e permissão - Somente quem criou ou o admin pode mudar)
- *     tags:
- *       - Car
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *     responses:
- *       204:
- *        description: Carro removido com sucesso
- */
-carRouter.delete(
-    "/:id",
-    auth,
-    checkPermission("delete", "car"),
-    verifyCarOwner,
-    carController.remove
-);
-
-/**
- * @openapi
- * /api/cars/my-purchases:
- *   get:
- *     summary: Lista os carros comprados pelo usuário logado (requer autenticação)
- *     tags:
- *       - Car
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Uma lista de carros que o usuário comprou.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/CarListResponse'
- */
-carRouter.get("/my-purchases", auth, carController.listMyPurchases);
-
-/**
- * @openapi
- * /api/cars/my-canceled-purchases:
- *   get:
- *     summary: Lista as compras de carros que foram canceladas pelo usuário logado (requer autenticação)
- *     tags:
- *       - Car
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Um histórico de registros de compras que foram canceladas pelo usuário.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/PurchaseLog'
- */
-carRouter.get("/my-canceled-purchases", auth, carController.listMyCanceledPurchases);
 
 export { carRouter };
