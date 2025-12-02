@@ -16,6 +16,7 @@ app.use(e.json());
 app.use(
     helmet({
         crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: false,
         contentSecurityPolicy: {
             directives: {
                 ...helmet.contentSecurityPolicy.getDefaultDirectives(),
