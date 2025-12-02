@@ -187,6 +187,57 @@ carRouter.put(
 
 /**
  * @openapi
+ * /api/cars/{id}/photo:
+ *   patch:
+ *     summary: Atualiza apenas a foto de um carro (requer autenticação e permissão)
+ *     description: Atualiza apenas o campo photo_url do carro. Remove a foto anterior e faz upload da nova.
+ *     tags:
+ *       - Car
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: O ID do carro cuja foto será atualizada.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - photo
+ *             properties:
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *                 description: Arquivo de imagem do carro
+ *     responses:
+ *       200:
+ *         description: Carro com a foto atualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarResponse'
+ *       400:
+ *         description: Foto não fornecida ou ID inválido
+ *       404:
+ *         description: Carro não encontrado
+ */
+carRouter.patch(
+    "/:id/photo",
+    auth,
+    checkPermission("edit", "car"),
+    verifyCarOwner,
+    upload.fields([{ name: "photo" }]),
+    carController.updatePhoto
+);
+
+/**
+ * @openapi
  * /api/cars/buy/{id}:
  *   patch:
  *     summary: Realiza a compra de um carro (requer autenticação e permissão)
@@ -510,5 +561,28 @@ carRouter.get(
  *               $ref: '#/components/schemas/CarResponse'
  */
 carRouter.get("/:id", carController.getById);
+
+/**
+ * @openapi
+ * /api/cars/{id}:
+ *   delete:
+ *     summary: Remove um carro (requer autenticação e permissão - Somente quem criou ou o admin pode mudar)
+ *     tags:
+ *       - Car
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       204:
+ *        description: Carro removido com sucesso
+ */
+carRouter.delete(
+    "/:id",
+    auth,
+    checkPermission("delete", "car"),
+    verifyCarOwner,
+    carController.remove
+);
 
 export { carRouter };

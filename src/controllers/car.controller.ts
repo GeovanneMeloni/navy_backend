@@ -333,6 +333,48 @@ async function update(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function updatePhoto(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+
+        if (mongoose.Types.ObjectId.isValid(id) === false) {
+            throw { status: 400, message: "ID do carro inválido" };
+        }
+
+        const existingCar = await carService.getById(id);
+        if (!existingCar) {
+            throw { status: 404, message: "Carro não encontrado" };
+        }
+
+        // Verifica se foi enviada uma foto
+        if (!req.files || !req.files["photo"]) {
+            throw { status: 400, message: "Foto é obrigatória" };
+        }
+
+        const newFile = req.files["photo"][0];
+
+        // Remove imagem anterior se existir
+        if (existingCar.photo_url) {
+            await deleteFile(existingCar.photo_url);
+        }
+
+        // Faz upload da nova foto
+        const newPhotoUrl = await uploadFile(
+            newFile.buffer,
+            `fotos/${Date.now()}_${newFile.originalname}`
+        );
+
+        // Atualiza apenas o photo_url
+        const updatedCar = await carService.updateCar(id, { photo_url: newPhotoUrl });
+
+        const carWithUrl = await GetCarWithSignedUrl(updatedCar);
+
+        res.status(200).json(carWithUrl);
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function remove(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
@@ -473,6 +515,7 @@ export default {
     listAvailableForRentByOwner,
     getById,
     update,
+    updatePhoto,
     remove,
     filterCars,
     listMyPurchases,
