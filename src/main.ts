@@ -23,7 +23,6 @@ app.use(
                 "script-src": ["'self'", "'unsafe-inline'"],
                 "style-src": ["'self'", "'unsafe-inline'"],
                 "img-src": ["'self'", "data:", "res.cloudinary.com", "validator.swagger.io"],
-                "connect-src": ["'self'", "https://navy-backend.onrender.com"],
                 "connect-src": ["'self'", "https://navy-backend.onrender.com", "http://localhost:8080", "https://navy-seminovos.onrender.com"],
             },
         },
