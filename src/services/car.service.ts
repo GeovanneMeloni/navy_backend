@@ -3,6 +3,7 @@ import { Car, CarType } from "../models/car/car.model";
 import { User } from "../models/user/user.model";
 import { generateShortDescription } from "../utils/car.utils";
 import { deleteFile } from "../utils/bucket";
+import PurchaseLogModel from "../models/purchaseLog.model";
 
 async function create(data: CarType) {
     // Verifica se o carro é para venda ou aluguel
@@ -133,11 +134,45 @@ async function buyCar(carId: string, buyerId: string) {
 
     if (!user) throw { status: 404, message: "Usuário não encontrado" };
 
+    await PurchaseLogModel.create({
+        car: car._id,
+        buyer: user._id,
+        seller: car.owner_id,
+        purchaseDate: new Date(),
+        status: "completed",
+    });
+
     car.status = "sold";
 
     car.sold_to = user._id;
 
     car.sold_at = new Date();
+
+    return await car.save();
+}
+
+async function cancelPurchase(carId: string, userId: string) {
+    const car = await Car.findById(carId);
+    if (!car) throw { status: 404, message: "Carro não encontrado" };
+
+    if (car.status !== "sold") {
+        throw { status: 400, message: "Este carro não foi vendido." };
+    }
+
+    const purchaseLog = await PurchaseLogModel.findOne({
+        car: carId,
+        buyer: userId,
+        status: "completed",
+    }).sort({ purchaseDate: -1 });
+
+    if (!purchaseLog) {
+        throw { status: 404, message: "Registro de compra não encontrado para este usuário." };
+    }
+
+    car.owner_id = purchaseLog.seller;
+    car.status = "available";
+    car.sold_at = null;
+    car.sold_to = undefined;
 
     return await car.save();
 }
@@ -288,6 +323,7 @@ export default {
     createCarForSale,
     createCarForRent,
     buyCar,
+    cancelPurchase,
     rentCar,
     returnRentedCar,
     getById,

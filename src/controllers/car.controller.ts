@@ -4,6 +4,7 @@ import { deleteFile, uploadFile } from "../utils/bucket";
 import { formatCarRequestData, GetCarWithSignedUrl } from "../utils/car.utils";
 import mongoose from "mongoose";
 import { getAddress, getUserIdFromRequest } from "../utils/user.utils";
+import PurchaseLogModel from "../models/purchaseLog.model";
 
 // métodos post
 async function create(
@@ -87,6 +88,25 @@ async function buy(req: Request, res: Response, next: NextFunction) {
         await carService.buyCar(id, buyerId);
 
         res.status(200).json({ message: `Carro ${id} comprado com sucesso` });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function cancelPurchase(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+        const userId = getUserIdFromRequest(req);
+
+        await carService.cancelPurchase(id, userId);
+
+        await PurchaseLogModel.findOneAndUpdate(
+            { car: id, buyer: userId, status: "completed" },
+            { status: "canceled", cancellationDate: new Date() },
+            { sort: { purchaseDate: -1 } }
+        );
+
+        res.status(200).json({ message: `Compra do carro ${id} cancelada com sucesso` });
     } catch (error) {
         next(error);
     }
@@ -407,11 +427,40 @@ async function filterCars(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function listMyPurchases(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = getUserIdFromRequest(req);
+        const cars = await carService.getAllWithFilter({
+            owner_id: userId,
+            status: "sold",
+        });
+        const carsWithUrl = await Promise.all(cars.map(GetCarWithSignedUrl));
+        res.status(200).json(carsWithUrl);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function listMyCanceledPurchases(req: Request, res: Response, next: NextFunction) {
+    try {
+        const userId = getUserIdFromRequest(req);
+        const canceledPurchases = await PurchaseLogModel.find({
+            buyer: userId,
+            status: "canceled",
+        }).populate("car");
+
+        res.status(200).json(canceledPurchases);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
     create,
     createForSale,
     createForRent,
     buy,
+    cancelPurchase,
     rent,
     returnCar,
     list,
@@ -426,4 +475,6 @@ export default {
     update,
     remove,
     filterCars,
+    listMyPurchases,
+    listMyCanceledPurchases,
 };

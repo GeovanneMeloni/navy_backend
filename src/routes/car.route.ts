@@ -5,6 +5,8 @@ import { upload } from "../middlewares/multer";
 import { checkPermission } from "../middlewares/checkPermission";
 import { verifyCarOwner } from "../middlewares/car/verifyCarOwner";
 import { verifyCarRenter } from "../middlewares/car/verifyCarRenter";
+import { verifyCanBuyCar } from "./verifyCanBuyCar";
+import { verifyCanCancelPurchase } from "./verifyCanCancelPurchase";
 
 const carRouter = Router();
 
@@ -162,7 +164,34 @@ carRouter.patch(
     "/buy/:id",
     auth,
     checkPermission("edit", "car"),
+    verifyCanBuyCar,
     carController.buy
+);
+
+/**
+ * @openapi
+ * /api/cars/cancel-purchase/{id}:
+ *   patch:
+ *     summary: Cancela a compra de um carro (requer autenticação e permissão)
+ *     description: Permite que o comprador (dono atual) ou um administrador cancele a compra de um carro. O carro voltará ao seu proprietário e status anterior.
+ *     tags:
+ *       - Car
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: O ID do carro cuja compra será cancelada.
+ */
+carRouter.patch(
+    "/cancel-purchase/:id",
+    auth,
+    checkPermission("edit", "car"),
+    verifyCanCancelPurchase,
+    carController.cancelPurchase
 );
 
 /**
@@ -427,5 +456,45 @@ carRouter.delete(
     verifyCarOwner,
     carController.remove
 );
+
+/**
+ * @openapi
+ * /api/cars/my-purchases:
+ *   get:
+ *     summary: Lista os carros comprados pelo usuário logado (requer autenticação)
+ *     tags:
+ *       - Car
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Uma lista de carros que o usuário comprou.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CarListResponse'
+ */
+carRouter.get("/my-purchases", auth, carController.listMyPurchases);
+
+/**
+ * @openapi
+ * /api/cars/my-canceled-purchases:
+ *   get:
+ *     summary: Lista as compras de carros que foram canceladas pelo usuário logado (requer autenticação)
+ *     tags:
+ *       - Car
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Um histórico de registros de compras que foram canceladas pelo usuário.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PurchaseLog'
+ */
+carRouter.get("/my-canceled-purchases", auth, carController.listMyCanceledPurchases);
 
 export { carRouter };
