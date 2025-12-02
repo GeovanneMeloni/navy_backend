@@ -10,6 +10,43 @@ import { verifyCanCancelPurchase } from "./verifyCanCancelPurchase";
 
 const carRouter = Router();
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     PurchaseLog:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: O ID do registro de compra.
+ *           example: 60c72b2f9b1d8c001f8e4d2a
+ *         car:
+ *           type: string
+ *           description: O ID do carro associado a este registro.
+ *           example: 60c72b2f9b1d8c001f8e4d2b
+ *         buyer:
+ *           type: string
+ *           description: O ID do usuário que comprou o carro.
+ *           example: 60c72b2f9b1d8c001f8e4d2c
+ *         seller:
+ *           type: string
+ *           description: O ID do usuário que vendeu o carro.
+ *           example: 60c72b2f9b1d8c001f8e4d2d
+ *         purchaseDate:
+ *           type: string
+ *           format: date-time
+ *           description: A data em que a compra foi realizada.
+ *         status:
+ *           type: string
+ *           enum: [completed, canceled]
+ *           description: O status da compra.
+ *         cancellationDate:
+ *           type: string
+ *           format: date-time
+ *           description: A data em que a compra foi cancelada (se aplicável).
+ */
+
 // Criação
 /**
  * @openapi
