@@ -13,7 +13,20 @@ mongoose
     .catch((err) => console.error("Erro ao conectar no MongoDB:", err));
 
 app.use(e.json());
-app.use(helmet());
+app.use(
+    helmet({
+        crossOriginEmbedderPolicy: false,
+        contentSecurityPolicy: {
+            directives: {
+                ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+                "script-src": ["'self'", "'unsafe-inline'"],
+                "style-src": ["'self'", "'unsafe-inline'"],
+                "img-src": ["'self'", "data:", "res.cloudinary.com", "validator.swagger.io"],
+                "connect-src": ["'self'", "https://navy-backend.onrender.com"],
+            },
+        },
+    })
+);
 app.use(cors());
 
 app.use(apiRateLimiter);
