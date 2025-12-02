@@ -144,7 +144,7 @@ async function buyCar(carId: string, buyerId: string) {
 
     car.status = "sold";
 
-    car.sold_to = user._id;
+    car.owner_id = user._id;
 
     car.sold_at = new Date();
 
