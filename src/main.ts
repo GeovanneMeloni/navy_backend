@@ -8,6 +8,8 @@ import { setupSwagger } from "./docs/swagger";
 import { apiRateLimiter } from "./security/apiRateLimiter";
 
 const app = e();
+
+app.set('trust proxy', 1);
 mongoose
     .connect(process.env.MONGO_URI!)
     .catch((err) => console.error("Erro ao conectar no MongoDB:", err));
@@ -42,3 +44,5 @@ app.listen(3000, () => {
     console.log(`Executando na porta: http://localhost:3000/api`);
     console.log(`Swagger disponível em: http://localhost:3000/swagger`);
 });
+
+app.use(apiRateLimiter);
